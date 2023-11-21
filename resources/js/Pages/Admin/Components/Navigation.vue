@@ -37,14 +37,14 @@
                     </svg>
                     <span class="sr-only">Toggle sidebar</span>
                 </button>
-                <a href="https://flowbite.com" class="flex items-center justify-between mr-4">
+                <ResponsiveNavLink :href="route('admin.dashboard')" class="flex items-center justify-between mr-4">
                     <img
-                        src="https://flowbite.s3.amazonaws.com/logo.svg"
+                        src="https://images.unsplash.com/photo-1496200186974-4293800e2c20?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bG9nbyUyMGVsZWt0cm9uaWt8ZW58MHx8MHx8fDI%3D"
                         class="mr-3 h-8"
-                        alt="Flowbite Logo"
+                        alt="Logo"
                     />
-                    <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Flowbite</span>
-                </a>
+                    <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Vue-Shop</span>
+                </ResponsiveNavLink>
                 <form action="#" method="GET" class="hidden md:block md:pl-2">
                     <label for="topbar-search" class="sr-only">Search</label>
                     <div class="relative md:w-64 md:w-96">
@@ -613,11 +613,11 @@
                     <div class="py-3 px-4">
               <span
                   class="block text-sm font-semibold text-gray-900 dark:text-white"
-              >Neil Sims</span
+              > {{ $page.props.auth.user.name }}</span
               >
                         <span
                             class="block text-sm text-gray-900 truncate dark:text-white"
-                        >name@flowbite.com</span
+                        > {{ $page.props.auth.user.email }}</span
                         >
                     </div>
                     <ul
@@ -721,7 +721,7 @@
                         aria-labelledby="dropdown"
                     >
                         <li>
-                            <Link :href="route('logout')" method="post" as="button" class="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" >Sign out</link>
+                            <ResponsiveNavLink :href="route('logout')" method="post" as="button" class="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Sign out</ResponsiveNavLink>
                         </li>
                     </ul>
                 </div>
@@ -731,6 +731,5 @@
 </template>
 
 <script setup>
-
-import Link from "@/Components/Link.vue";
+import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
 </script>

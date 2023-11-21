@@ -19,6 +19,12 @@
         "vue": "^3.2.41"
     },
     "dependencies": {
-        "flowbite": "^2.1.1"
+        "@element-plus/icons-vue": "^2.1.0",
+        "@headlessui/vue": "^1.7.16",
+        "@inertiajs/inertia-vue3": "^0.6.0",
+        "element-plus": "^2.4.2",
+        "flag-icons": "^7.0.2",
+        "flowbite": "^2.1.1",
+        "vue-sweetalert2": "^5.0.5"
     }
 }
