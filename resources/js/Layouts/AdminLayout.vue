@@ -6,8 +6,11 @@ import Sidebar from "@/Pages/Admin/Components/Sidebar.vue";
 <template>
     <div class="antialiased bg-gray-50 dark:bg-gray-900">
         <Navigation/>
+        <!-- Sidebar -->
+
         <Sidebar/>
-        <main class="p-4 md:ml-64 mt-10 pt-20 h-screen">
+
+        <main class="p-4 md:ml-64 h-screen pt-20">
             <slot />
         </main>
     </div>
