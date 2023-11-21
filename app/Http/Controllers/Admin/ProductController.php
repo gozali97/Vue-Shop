@@ -17,16 +17,24 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::query()->with(['category', 'brand'])->latest()->paginate(10);
+
+        $products = Product::query()
+            ->with(['category', 'brand'])
+            ->when($request->q, function ($query, $q){
+                $query->where('title', 'like', '%'.$q.'%');
+            })
+            ->latest()
+            ->paginate(10);
         $brands = Brand::all();
         $categories = Category::all();
 
         return Inertia::render('Admin/Product/Index',[
             'products' => $products,
             'brands' => $brands,
-            'categories' => $categories
+            'categories' => $categories,
+            'search'=> $request->q
         ]);
     }
 

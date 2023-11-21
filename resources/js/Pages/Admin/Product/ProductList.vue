@@ -1,5 +1,5 @@
 <script setup>
-    import {ref} from 'vue'
+import {ref, watch} from 'vue'
     import {router, usePage} from "@inertiajs/vue3";
     import { Plus } from '@element-plus/icons-vue'
     import Pagination from "@/Components/Pagination.vue";
@@ -13,6 +13,26 @@
 
     //upload mulitpel images
     const productImages = ref([])
+    const dialogImageUrl = ref('')
+    const handleFileChange = (file) => {
+        // console.log(file)
+        productImages.value.push(file)
+    }
+
+    const handlePictureCardPreview = (file) => {
+        dialogImageUrl.value = file.url
+        dialogVisible.value = true
+    }
+
+    const handleRemove = (file) => {
+        console.log(file)
+    }
+
+    //search
+    const search = ref('');
+    watch(search, (value) =>{
+        console.log(value);
+    });
 
     //form data product
     const id = ref('');
@@ -129,27 +149,56 @@
                     <textarea type="text" v-model="description" id="form_desc" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" rows="3" required></textarea>
                 </div>
 
-                <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
+                <!-- multiple images upload -->
+                <div class="grid  md:gap-6">
+                    <div class="relative z-0 w-full mb-6 group">
+                        <el-upload v-model:file-list="productImages" list-type="picture-card" multiple
+                                   :on-preview="handlePictureCardPreview" :on-remove="handleRemove" :on-change="handleFileChange">
+                            <el-icon>
+                                <Plus />
+                            </el-icon>
+                        </el-upload>
+
+                    </div>
+                </div>
+                <!-- end -->
+
+                <!-- list of images for selected product -->
+                <div class="flex flex-nowrap mb-8 ">
+                    <div v-for="(pimage, index) in product_images" :key="pimage.id" class="relative w-32 h-32 ">
+                        <img class="w-24 h-20 rounded" :src="`/${pimage.image}`" alt="">
+                        <span
+                            class="absolute top-0 right-8 transform -translate-y-1/2 w-3.5 h-3.5 bg-red-400 border-2 border-white dark:border-gray-800 rounded-full">
+                            <span @click="deleteImage(pimage, index)"
+                                  class="text-white text-xs font-bold absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">x</span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- end -->
+
+                <div class="flex w-full justify-center items-center gap-4">
+                    <button type="button" @click="dialogVisible = false" class="text-white bg-black hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-900 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-gray-200 dark:hover:bg-gray-400 dark:focus:ring-black">Cancel</button>
+                    <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
+                </div>
             </form>
         </el-dialog>
         <!-- End modal -->
 
-        <div class="mx-auto max-w-screen-xl px-4 lg:px-12">
+        <div class="max-w-screen-xl px-2">
             <!-- Start coding here -->
             <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
                 <div class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
                     <div class="w-full md:w-1/2">
-                        <form class="flex items-center">
-                            <label for="simple-search" class="sr-only">Search</label>
-                            <div class="relative w-full">
-                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                    <svg aria-hidden="true" class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                                <input type="text" id="simple-search" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Search" required="">
+                        <label for="simple-search" class="sr-only">Search</label>
+                        <div class="relative w-full">
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <svg aria-hidden="true" class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                                </svg>
                             </div>
-                        </form>
+                            <input type="text" v-model="search" id="simple-search" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Search" required="">
+                        </div>
                     </div>
                     <div class="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
                         <button type="button" @click="openAddModal" class="flex items-center justify-center text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
@@ -216,6 +265,7 @@
                     <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
+                            <th scope="col" class="px-4 py-3">#</th>
                             <th scope="col" class="px-4 py-3">Product name</th>
                             <th scope="col" class="px-4 py-3">Category</th>
                             <th scope="col" class="px-4 py-3">Brand</th>
@@ -229,7 +279,8 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr v-for="product in products.data" :key="product.id" class="border-b dark:border-gray-700">
+                        <tr v-for="(product, index) in products.data" :key="product.id" class="border-b dark:border-gray-700">
+                            <td class="px-4 py-3">{{index+1}}</td>
                             <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">{{product.title}}</th>
                             <td class="px-4 py-3">{{product.category.name}}</td>
                             <td class="px-4 py-3">{{product.brand.name}}</td>
