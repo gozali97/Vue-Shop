@@ -1,18 +1,24 @@
 <script setup>
-import {ref, watch} from 'vue'
+    import {ref, watch} from 'vue'
     import {router, usePage} from "@inertiajs/vue3";
     import { Plus } from '@element-plus/icons-vue'
+    import { ElNotification } from 'element-plus'
     import Pagination from "@/Components/Pagination.vue";
 
-    const products = usePage().props.products;
+    defineProps({
+        products: Array,
+    });
+    // const products = usePage().props.products;
     const brands = usePage().props.brands;
     const categories = usePage().props.categories;
+    const searchValue = usePage().props.search;
     const isAddproduct = ref(false);
     const isEditProduct = ref(false);
     const dialogVisible = ref(false)
 
     //upload mulitpel images
     const productImages = ref([])
+    const dialogPreviewImg = ref(false)
     const dialogImageUrl = ref('')
     const handleFileChange = (file) => {
         // console.log(file)
@@ -21,7 +27,7 @@ import {ref, watch} from 'vue'
 
     const handlePictureCardPreview = (file) => {
         dialogImageUrl.value = file.url
-        dialogVisible.value = true
+        dialogPreviewImg.value = true
     }
 
     const handleRemove = (file) => {
@@ -29,9 +35,14 @@ import {ref, watch} from 'vue'
     }
 
     //search
-    const search = ref('');
+    const search = ref(searchValue);
     watch(search, (value) =>{
-        console.log(value);
+        router.get(
+            "/admin/product/index",
+            {search: value},
+            {preserveState: false,
+            }
+        );
     });
 
     //form data product
@@ -70,13 +81,10 @@ import {ref, watch} from 'vue'
         try {
             await router.post('store', formData, {
                 onSuccess: page => {
-                    Swal.fire({
-                        toast: true,
-                        icon: 'success',
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 3000,
-                        title: page.props.flash.success
+                    ElNotification({
+                        title: 'Success',
+                        message: page.props.flash.success,
+                        type: 'success',
                     })
                     dialogVisible.value = false;
                     resetFormData();
@@ -94,16 +102,107 @@ import {ref, watch} from 'vue'
         quantity.value = '';
         description.value = '';
         productImages.value = [];
+        dialogImageUrl.value = ''
     };
 
     const openEditModal = (product) => {
 
+        id.value = product.id;
+        title.value = product.title;
+        price.value = Number(product.price);
+        quantity.value = product.quantity;
+        description.value = product.description;
+        brand_id.value = product.brand_id;
+        category_id.value = product.category_id;
+        product_images.value = product.product_images;
+
         isEditProduct.value = true;
         isAddproduct.value = false;
         dialogVisible.value = true;
+
     }
 
-    const updateProduct = async ()=>{}
+    //delete image from product image
+    const deleteImage = async (pimage, index) => {
+        try {
+            await router.delete('/admin/product/image/' + pimage.id, {
+                onSuccess: (page) => {
+                    product_images.value.splice(index, 1);
+                    ElNotification({
+                        title: 'Success',
+                        message: page.props.flash.success,
+                        type: 'success',
+                    })
+                }
+            })
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    const updateProduct = async () => {
+        const formData = new FormData();
+        formData.append('title', title.value);
+        formData.append('price', price.value);
+        formData.append('quantity', quantity.value);
+        formData.append('description', description.value);
+        formData.append('category_id', category_id.value);
+        formData.append('brand_id', brand_id.value);
+        formData.append("_method", 'PUT');
+        // Append product images to the FormData
+        for (const image of productImages.value) {
+            formData.append('product_images[]', image.raw);
+        }
+
+        try {
+            await router.post('update/' + id.value, formData, {
+                onSuccess: (page) => {
+                    dialogVisible.value = false;
+                    resetFormData();
+                    ElNotification({
+                        title: 'Success',
+                        message: page.props.flash.success,
+                        type: 'success',
+                    })
+                }
+            })
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    //delete product method
+    const deleteProduct = (product, index) => {
+        Swal.fire({
+            title: 'Are you Sure',
+            text: "This actions cannot undo!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'No',
+            confirmButtonText: 'Yes, delete!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                try {
+                    router.delete('destroy/' + product.id, {
+                        onSuccess: (page) => {
+                            this.delete(product, index);
+                            Swal.fire({
+                                toast: true,
+                                icon: "success",
+                                position: "top-end",
+                                showConfirmButton: false,
+                                title: page.props.flash.success
+                            });
+                        }
+                    })
+                } catch (err) {
+                    console.log(err)
+                }
+            }
+        })
+    }
 
 </script>
 
@@ -113,50 +212,61 @@ import {ref, watch} from 'vue'
         <!-- Start modal -->
         <el-dialog
             v-model="dialogVisible"
-            :title="isEditProduct ? 'Edit product' : 'Add Product'"
-            width="50%"
+            class="text-gray-800 dark:bg-gray-800 dark:text-gray-200"
+            width="80%"
         >
+            <h3 class="text-lg text-gray-800 dark:text-white mb-6">{{ isEditProduct ? 'Edit product' : 'Add Product' }}</h3>
             <form @submit.prevent="isEditProduct ? updateProduct() : AddProduct()">
                 <div class="mb-6">
                     <label for="form_title" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Product Name</label>
-                    <input v-model="title" type="text" id="form_title" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="product name" required>
+                    <input v-model="title" type="text" id="form_title" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Product name" required>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div class="mb-6">
+                        <label for="form_category" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Category</label>
+                        <select id="form_category" name="form_category" v-model="category_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            <option value="">Select a option</option>
+                            <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.name }}</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="form_brand" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Brands</label>
+                        <select id="form_brand" name="form_brand" v-model="brand_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            <option value="">Select a option</option>
+                            <option v-for="brand in brands" :key="brand.id" :value="brand.id">{{brand.name}}</option>
+                        </select>
+                    </div>
                 </div>
 
-                <div class="mb-6">
-                    <label for="form_category" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Category</label>
-                    <select id="form_category" name="form_category" v-model="category_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                        <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.name }}</option>
-                    </select>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div class="mb-6">
+                        <label for="form_price" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Price</label>
+                        <input type="number" v-model="price" id="form_price" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Product price" required>
+                    </div>
+                    <div class="mb-6">
+                        <label for="form_quantity" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Quantity</label>
+                        <input type="number" v-model="quantity" id="form_quantity" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Product quantity" required>
+                    </div>
                 </div>
 
-                <div class="mb-6">
-                    <label for="form_brand" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Brands</label>
-                    <select id="form_brand" name="form_brand" v-model="brand_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                        <option v-for="brand in brands" :key="brand.id" :value="brand.id">{{brand.name}}</option>
-                    </select>
-                </div>
-
-                <div class="mb-6">
-                    <label for="form_price" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Price</label>
-                    <input type="number" v-model="price" id="form_price" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
-                </div>
-                <div class="mb-6">
-                    <label for="form_quantity" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Quantity</label>
-                    <input type="number" v-model="quantity" id="form_quantity" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
-                </div>
                 <div class="mb-6">
                     <label for="form_desc" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>
-                    <textarea type="text" v-model="description" id="form_desc" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" rows="3" required></textarea>
+                    <textarea type="text" v-model="description" id="form_desc" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" rows="3" placeholder="Product description" required></textarea>
                 </div>
 
                 <!-- multiple images upload -->
                 <div class="grid  md:gap-6">
                     <div class="relative z-0 w-full mb-6 group">
-                        <el-upload v-model:file-list="productImages" list-type="picture-card" multiple
+                        <el-upload v-model:file-list="productImages" accept=".jpg, .jpeg, .png" list-type="picture-card" multiple
                                    :on-preview="handlePictureCardPreview" :on-remove="handleRemove" :on-change="handleFileChange">
                             <el-icon>
                                 <Plus />
                             </el-icon>
+
+                            <el-dialog v-model="dialogPreviewImg">
+                                <img w-full :src="dialogImageUrl" alt="Preview Image" />
+                            </el-dialog>
                         </el-upload>
 
                     </div>
@@ -165,12 +275,13 @@ import {ref, watch} from 'vue'
 
                 <!-- list of images for selected product -->
                 <div class="flex flex-nowrap mb-8 ">
+<!--                    {{product_images}}-->
                     <div v-for="(pimage, index) in product_images" :key="pimage.id" class="relative w-32 h-32 ">
                         <img class="w-24 h-20 rounded" :src="`/${pimage.image}`" alt="">
                         <span
                             class="absolute top-0 right-8 transform -translate-y-1/2 w-3.5 h-3.5 bg-red-400 border-2 border-white dark:border-gray-800 rounded-full">
                             <span @click="deleteImage(pimage, index)"
-                                  class="text-white text-xs font-bold absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">x</span>
+                                  class="text-white text-xs font-bold absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer">x</span>
                         </span>
                     </div>
                 </div>
@@ -178,7 +289,7 @@ import {ref, watch} from 'vue'
                 <!-- end -->
 
                 <div class="flex w-full justify-center items-center gap-4">
-                    <button type="button" @click="dialogVisible = false" class="text-white bg-black hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-900 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-gray-200 dark:hover:bg-gray-400 dark:focus:ring-black">Cancel</button>
+                    <button type="button" @click="dialogVisible = false" class="text-white bg-black hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-900 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-dark dark:hover:bg-slate-900 dark:focus:ring-black">Cancel</button>
                     <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
                 </div>
             </form>
@@ -189,6 +300,7 @@ import {ref, watch} from 'vue'
             <!-- Start coding here -->
             <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
                 <div class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
+                    <!-- Start from search -->
                     <div class="w-full md:w-1/2">
                         <label for="simple-search" class="sr-only">Search</label>
                         <div class="relative w-full">
@@ -197,16 +309,21 @@ import {ref, watch} from 'vue'
                                     <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
                                 </svg>
                             </div>
-                            <input type="text" v-model="search" id="simple-search" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Search" required="">
+                            <input type="text" v-model.lazy="search" id="simple-search" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Search">
                         </div>
                     </div>
+                    <!-- end form search -->
+
                     <div class="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
+                        <!-- Start button add product -->
                         <button type="button" @click="openAddModal" class="flex items-center justify-center text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
                             <svg class="h-3.5 w-3.5 mr-2" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                                 <path clip-rule="evenodd" fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
                             </svg>
                             Add product
                         </button>
+                        <!-- end button add product -->
+                        <!-- Start filter product -->
                         <div class="flex items-center space-x-3 w-full md:w-auto">
                             <button id="actionsDropdownButton" data-dropdown-toggle="actionsDropdown" class="w-full md:w-auto flex items-center justify-center py-2 px-4 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700" type="button">
                                 <svg class="-ml-1 mr-1.5 w-5 h-5" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -259,6 +376,7 @@ import {ref, watch} from 'vue'
                                 </ul>
                             </div>
                         </div>
+                        <!-- end filter product -->
                     </div>
                 </div>
                 <div class="overflow-x-auto">
@@ -270,6 +388,7 @@ import {ref, watch} from 'vue'
                             <th scope="col" class="px-4 py-3">Category</th>
                             <th scope="col" class="px-4 py-3">Brand</th>
                             <th scope="col" class="px-4 py-3">Description</th>
+                            <th scope="col" class="px-4 py-3">Quantity</th>
                             <th scope="col" class="px-4 py-3">Stock</th>
                             <th scope="col" class="px-4 py-3">Publish</th>
                             <th scope="col" class="px-4 py-3">Price</th>
@@ -281,13 +400,20 @@ import {ref, watch} from 'vue'
                         <tbody>
                         <tr v-for="(product, index) in products.data" :key="product.id" class="border-b dark:border-gray-700">
                             <td class="px-4 py-3">{{index+1}}</td>
-                            <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">{{product.title}}</th>
+                            <th scope="row" class="px-4 py-3 font-medium dark:text-gray-200 text-gray-900 whitespace-nowrap">{{product.title}}</th>
                             <td class="px-4 py-3">{{product.category.name}}</td>
                             <td class="px-4 py-3">{{product.brand.name}}</td>
-                            <td class="px-4 py-3 line-clamp-1">{{product.description}}</td>
-                            <td class="px-4 py-3">{{product.inStock}}</td>
-                            <td class="px-4 py-3">{{product.published}}</td>
-                            <td class="px-4 py-3">Rp. {{ product.price }}</td>
+                            <td class="px-4 py-3 line-clamp-2">{{product.description}}</td>
+                            <td class="px-4 py-3">{{product.quantity}}</td>
+                            <td class="px-4 py-3">
+                                <span v-if="product.inStock == 1" class="bg-green-100 text-green-800 flex w-20 justify-center items-center text-xs font-medium me-2 px-2 py-1 rounded dark:bg-green-900 dark:text-green-300">In Stock</span>
+                                <span v-else class="bg-red-100 text-red-800 flex w-20 justify-center items-center text-xs font-medium me-2 px-2 py-1 rounded dark:bg-red-900 dark:text-red-300">Out Stock</span>
+                            </td>
+                            <td class="px-4 py-3">
+                                <span v-if="product.published == 1" class="bg-blue-100 text-blue-800 flex w-20 justify-center items-center text-xs font-medium me-2 px-2 py-1 rounded dark:bg-blue-900 dark:text-blue-300">Published</span>
+                                <span v-else class="bg-yellow-100 text-yellow-800 text-xs flex w-20 justify-center items-center font-medium me-2 px-2 py-1 rounded dark:bg-yellow-900 dark:text-yellow-300">Arsip</span>
+                            </td>
+                            <td class="px-4 py-3 w-32">Rp. {{ Number(product.price).toLocaleString() }}</td>
                             <td class="px-4 py-3 flex items-center justify-end">
                                 <button :id="`${product.id}-button`" :data-dropdown-toggle="`${product .id}`"
                                         class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100"
@@ -309,17 +435,16 @@ import {ref, watch} from 'vue'
                                         </li>
                                     </ul>
                                     <div class="py-1">
-                                        <a href="#"
-                                           class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Delete</a>
+                                        <a href="#" @click="deleteProduct(product, index)" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Delete</a>
                                     </div>
                                 </div>
                             </td>
                         </tr>
                         </tbody>
                     </table>
-                </div>
-                <div class="mt-4 p-4">
-                        <Pagination :data="products"/>
+                    <div class="mt-4 py-4 px-10">
+<!--                            <Pagination :data="products"/>-->
+                    </div>
                 </div>
             </div>
         </div>

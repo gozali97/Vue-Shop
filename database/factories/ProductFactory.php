@@ -23,7 +23,7 @@ class ProductFactory extends Factory
             'quantity' => rand(1, 15),
             'category_id' => rand(1, 4),
             'brand_id' => rand(1, 6),
-            'inStock' => rand(1, 50),
+            'inStock' => 1,
             'published' => 1,
             'created_by' => 1,
             'description' => $this->faker->sentence(),

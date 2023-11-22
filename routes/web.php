@@ -57,6 +57,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::controller(ProductController::class)->group(function () {
         Route::get('product/index', 'index')->name('admin.product.index');
         Route::post('product/store', 'store')->name('admin.product.store');
+        Route::put('product/update/{id}', 'update')->name('admin.product.update');
+        Route::delete('product/image/{id}', 'deleteImage')->name('admin.product.image.delete');
+        Route::delete('product/destroy/{id}','destroy')->name('admin.product.destroy');
     });
 });
 //end admin route
