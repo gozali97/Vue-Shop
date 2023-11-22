@@ -11,6 +11,7 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 import "/node_modules/flag-icons/css/flag-icons.min.css";
 import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
+import 'aos/dist/aos.css'
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 

@@ -1,5 +1,4 @@
 <script setup>
-import PageLink from "@/Components/PageLink.vue";
 import Link from "@/Components/Link.vue";
 
 defineProps({
