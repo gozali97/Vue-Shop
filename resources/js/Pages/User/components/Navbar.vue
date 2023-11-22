@@ -1,19 +1,30 @@
 <script setup>
 import { Link, usePage } from '@inertiajs/vue3';
-import {Edit} from "@element-plus/icons-vue";
+import {Edit, Moon, Sunny} from "@element-plus/icons-vue";
+import {useDark, useToggle} from "@vueuse/core";
+
 const canLogin = usePage().props.canLogin;
 const canRegister = usePage().props.canRegister;
 const auth = usePage().props.auth;
+
+const isDark = useDark();
 </script>
 
 <template>
-    <nav class="bg-white border-gray-200 border-b-2 w-full dark:bg-gray-900">
+    <nav class="bg-white border-gray-200 border-b-2 dark:border-none w-full dark:bg-gray-900">
         <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-            <Link :href="route('user.home')" class="flex items-center space-x-3 rtl:space-x-reverse">
-                <img src="https://images.unsplash.com/photo-1496200186974-4293800e2c20?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bG9nbyUyMGVsZWt0cm9uaWt8ZW58MHx8MHx8fDI%3D" class="h-8" alt="Flowbite Logo" />
+            <Link :href="route('user.home')" class="flex items-center space-x-3  rtl:space-x-reverse">
+                <img src="https://images.unsplash.com/photo-1496200186974-4293800e2c20?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bG9nbyUyMGVsZWt0cm9uaWt8ZW58MHx8MHx8fDI%3D" class="h-8 dark:border dark:border-gray-100" alt="Flowbite Logo" />
                 <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">V-Shop</span>
             </Link>
             <div v-if="canLogin" class="flex items-center md:order-2">
+                <el-switch
+                    v-model="isDark"
+                    class="mr-3 cursor-pointer"
+                    :active-action-icon="Moon"
+                    style="--el-switch-on-color: #13ce66; --el-switch-off-color: #427D9D"
+                    :inactive-action-icon="Sunny"
+                />
                 <div class="mr-4">
 
 <!--                    <Link :href="route('cart.view')"-->
@@ -32,21 +43,22 @@ const auth = usePage().props.auth;
 
 
                 </div>
-                <button v-if="auth.user" type="button"
-                        class="flex mr-3 text-sm rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
-                        id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown"
-                        data-dropdown-placement="bottom">
-                    <span class="sr-only">Open user menu</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                </button>
-                <div v-else>
+                    <button v-if="auth.user" type="button"
+                            class="flex mr-3 text-sm rounded-full md:mr-0"
+                            id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown"
+                            data-dropdown-placement="bottom">
+                        <span class="mr-2 capitalize md:block hidden mt-0.5">{{auth.user.name}}</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </button>
+
+                <div v-else class="flex">
                     <Link :href="route('login')" type="button"
-                          class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2 text-center me-2 mb-2">
+                          class="hidden lg:block text-white  bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-1 mt-2 text-center me-2 mb-2">
                         Login</Link>
                     <Link :href="route('register')" v-if="canRegister" type="button"
-                          class="text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-5 py-2 text-center me-2 mb-2">
+                          class="hidden lg:block text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-5 py-1 mt-2 text-center me-2 mb-2">
                         Register</Link>
 
                 </div>
@@ -70,7 +82,7 @@ const auth = usePage().props.auth;
 
 
                         <li>
-                            <Link :href="route('logout')" method="post"
+                            <Link :href="route('logout')" method="post" as="button"
                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
                                 Sign
                                 out</Link>
@@ -111,6 +123,18 @@ const auth = usePage().props.auth;
                     <li>
                         <a href="#"
                            class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Contact</a>
+                    </li>
+                    <li v-if="auth" >
+                        <Link :href="route('dashboard')"
+                           class="block lg:hidden py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Dashboard</Link>
+                    </li>
+                    <li v-if="!auth">
+                        <Link :href="route('login')"
+                           class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Login</Link>
+                    </li>
+                    <li v-if="!auth">
+                        <Link :href="route('Register')"
+                           class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Register</Link>
                     </li>
                 </ul>
             </div>

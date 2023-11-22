@@ -24,6 +24,7 @@ class UserController extends Controller
             ->latest()
             ->paginate(12)
             ->withQueryString();
+//        return $products;
         return Inertia::render('User/Index',[
             'products' => $products,
             'search' => $request->search

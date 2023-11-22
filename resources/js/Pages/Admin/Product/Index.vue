@@ -4,7 +4,7 @@ import AdminLayout from "@/Layouts/AdminLayout.vue";
 import ProductList from "@/Pages/Admin/Product/ProductList.vue";
 
 defineProps({
-    products:Array
+    products:Object
 })
 
 </script>

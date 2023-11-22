@@ -3,6 +3,8 @@
 import App from "@/Layouts/App.vue";
 import {Head, usePage} from "@inertiajs/vue3";
 import Feature from "@/Pages/User/components/Feature.vue";
+import Paginate from "@/Components/Paginate.vue";
+import Testimoni from "@/Pages/User/components/Testimoni.vue";
 
 const sampleImage = [
     {
@@ -24,7 +26,8 @@ const sampleImage = [
 ];
 
 defineProps({
-    products:Array
+    products:Object,
+    default: () => ({}),
 });
 
 // const products = usePage().props.products;
@@ -33,7 +36,7 @@ defineProps({
 <template>
     <App>
         <Head title="Dashboard" />
-        <div class="bg-white">
+        <div class="bg-white dark:bg-gray-900">
             <div class="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
                 <h2 class="text-2xl font-bold tracking-tight text-gray-900">Latest Product List</h2>
 
@@ -47,22 +50,35 @@ defineProps({
                                 <img :src="simg.imageSrc" :alt="simg.name" class="h-20 w-20 object-cover object-center lg:h-full lg:w-full" />
                             </el-carousel-item>
                         </el-carousel>
-                        <div class="mt-4 flex justify-between">
+                        <div class="mt-4 flex justify-between px-4">
                             <div>
                                 <h3 class="text-sm text-gray-700">
-                                    <a :href="product.href">
-                                        <span aria-hidden="true" class="absolute inset-0" />
+                                    <a :href="product.href" class="text-gray-900 font-semibold dark:text-gray-100">
+                                        <span aria-hidden="true" class="absolute inset-0 " />
                                         {{ product.title }}
                                     </a>
                                 </h3>
-                                <p class="mt-1 text-sm text-gray-500">{{ product.brand.name }}</p>
+                                <p class="mt-1 text-sm text-gray-600 dark:text-gray-300">{{ product.brand.name }}</p>
                             </div>
-                            <p class="text-sm font-medium text-gray-900">Rp. {{ Number(product.price).toLocaleString() }}</p>
+                            <p class="text-sm font-medium text-gray-900 dark:text-gray-50">Rp. {{ Number(product.price).toLocaleString() }}</p>
                         </div>
                     </div>
                 </div>
+                <div data-aos="fade-left" class="mt-10 flex justify-end">
+                    <Paginate :products="products"/>
+                </div>
             </div>
         </div>
+        <div data-aos="zoom-in" class="py-6">
+            <el-carousel :interval="4000" type="card" height="300px">
+                <el-carousel-item v-for="item in products.data" :key="item">
+                    <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHByb2R1Y3R8ZW58MHx8MHx8fDA%3D" alt="">
+                    <h3 class="flex p-10justify-center items-center">{{ item.title }}</h3>
+                </el-carousel-item>
+            </el-carousel>
+        </div>
+
+        <Testimoni/>
         <Feature/>
     </App>
 </template>

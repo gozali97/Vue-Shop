@@ -6,7 +6,7 @@
     import Pagination from "@/Components/Pagination.vue";
 
     defineProps({
-        products: Array,
+        products: Object,
     });
     // const products = usePage().props.products;
     const brands = usePage().props.brands;
@@ -443,7 +443,7 @@
                         </tbody>
                     </table>
                     <div class="mt-4 py-4 px-10">
-<!--                            <Pagination :data="products"/>-->
+                            <Pagination :data="products"/>
                     </div>
                 </div>
             </div>
