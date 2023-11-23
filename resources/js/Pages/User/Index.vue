@@ -69,7 +69,7 @@ const addToCart = (product) => {
 
                         <div
                             class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-blue-200 cursor-pointer ">
-                            <div class="bg-blue-700 hover:bg-blue-700 p-2 rounded-full cursor-pointer">
+                            <div class="bg-cyan-700 hover:bg-cyan-500 transition duration-150 hover:scale-105 p-2 rounded-full cursor-pointer">
                                 <a @click="addToCart(product)">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                          stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-white">
@@ -78,7 +78,7 @@ const addToCart = (product) => {
                                     </svg>
                                 </a>
                             </div>
-                            <div class="bg-blue-700 p-2 rounded-full ml-2">
+                            <div class="bg-emerald-500 p-2 rounded-full ml-2">
                                 <a href="detail">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                          stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-white">

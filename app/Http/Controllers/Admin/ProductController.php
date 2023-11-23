@@ -26,14 +26,20 @@ class ProductController extends Controller
             ->when($request->search, function ($query, $search) {
                 $query->where('title', 'like', '%' . $search . '%')
                     ->OrWhere('description', 'like', '%' . $search . '%')
-                    ->OrWhere('price', 'like', '%' . $search . '%');
+                    ->OrWhere('price', 'like', '%' . $search . '%')
+                    ->orWhereHas('category', function ($query) use ($search) {
+                        $query->where('name', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('brand', function ($query) use ($search) {
+                        $query->where('name', 'like', '%' . $search . '%');
+                    });
             })
             ->latest()
             ->paginate(10)
             ->withQueryString();
         $brands = Brand::all();
         $categories = Category::all();
-//return $products;
+
         return Inertia::render('Admin/Product/Index',[
             'products' => $products,
             'brands' => $brands,

@@ -28,7 +28,7 @@ const isDark = useDark();
                 <div class="mr-4">
 
                     <Link :href="route('user.home')"
-                          class="relative inline-flex items-center p-2 text-sm font-medium text-center text-white rounded-lg focus:ring-4 focus:outline-none">
+                          class="relative inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 dark:text-white rounded-lg focus:ring-4 focus:outline-none">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                              stroke="currentColor" class="w-6 h-6 ">
                             <path stroke-linecap="round" stroke-linejoin="round"

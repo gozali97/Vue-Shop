@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController;
@@ -46,6 +47,11 @@ Route::group(['prefix' => 'admin', 'middleware' => 'redirectAdmin'], function ()
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+
+    Route::controller(BannerController::class)->group(function () {
+        Route::get('banner/index', 'index')->name('admin.banner.index');
+        Route::post('banner/store', 'store')->name('admin.banner.store');
+    });
 
     //category
     Route::controller(CategoryController::class)->group(function () {

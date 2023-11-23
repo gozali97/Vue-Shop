@@ -92,6 +92,11 @@ import SubLink from "@/Components/SubLink.vue";
                     </button>
                     <ul id="dropdown-pages" class="hidden py-2 space-y-2">
                         <li>
+                            <SubLink :href="route('admin.banner.index')"
+                                     class="flex items-center p-2 pl-11 w-full text-base font-medium text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                            >Banner</SubLink>
+                        </li>
+                        <li>
                             <SubLink :href="route('admin.category.index')"
                                 class="flex items-center p-2 pl-11 w-full text-base font-medium text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
                             >Category</SubLink>
