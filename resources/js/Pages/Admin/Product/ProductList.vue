@@ -1,20 +1,22 @@
 <script setup>
-    import {ref, watch} from 'vue'
+    import {ref, watch } from 'vue'
     import {router, usePage} from "@inertiajs/vue3";
     import { Plus } from '@element-plus/icons-vue'
     import { ElNotification } from 'element-plus'
     import Pagination from "@/Components/Pagination.vue";
+    import Select from "@/Components/Select.vue";
 
     defineProps({
         products: Object,
+        brands: Object,
     });
     // const products = usePage().props.products;
-    const brands = usePage().props.brands;
+    // const brands = usePage().props.brands;
     const categories = usePage().props.categories;
     const searchValue = usePage().props.search;
     const isAddproduct = ref(false);
     const isEditProduct = ref(false);
-    const dialogVisible = ref(false)
+    const dialogVisible = ref(false);
 
     //upload mulitpel images
     const productImages = ref([])
@@ -208,7 +210,6 @@
 
 <template>
     <section class="bg-gray-50 dark:bg-gray-900 p-3 sm:p-5">
-
         <!-- Start modal -->
         <el-dialog
             v-model="dialogVisible"
@@ -225,17 +226,18 @@
                     <div class="mb-6">
                         <label for="form_category" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Category</label>
                         <select id="form_category" name="form_category" v-model="category_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                            <option value="">Select a option</option>
-                            <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.name }}</option>
+                            <option class="px-2 py-4" value="">Select a option</option>
+                            <option class="px-2 py-4" v-for="category in categories" :key="category.id" :value="category.id">{{ category.name }}</option>
                         </select>
                     </div>
 
                     <div class="mb-6">
-                        <label for="form_brand" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Brands</label>
+                        <label for="form_brand" class="block text-sm font-medium mb-2 text-gray-900 dark:text-white">Brands</label>
                         <select id="form_brand" name="form_brand" v-model="brand_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                             <option value="">Select a option</option>
                             <option v-for="brand in brands" :key="brand.id" :value="brand.id">{{brand.name}}</option>
                         </select>
+
                     </div>
                 </div>
 

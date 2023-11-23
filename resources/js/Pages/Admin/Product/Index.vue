@@ -4,7 +4,8 @@ import AdminLayout from "@/Layouts/AdminLayout.vue";
 import ProductList from "@/Pages/Admin/Product/ProductList.vue";
 
 defineProps({
-    products:Object
+    products:Object,
+    brands: Object,
 })
 
 </script>
@@ -12,6 +13,6 @@ defineProps({
 <template>
     <AdminLayout>
             <Head title="Product" />
-            <ProductList :products="products" ></ProductList>
+            <ProductList :products="products"  :brands="brands"></ProductList>
     </AdminLayout>
 </template>
