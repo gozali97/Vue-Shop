@@ -1,6 +1,6 @@
 <script setup>
 import { Link, usePage } from '@inertiajs/vue3';
-import {Edit, Moon, Sunny} from "@element-plus/icons-vue";
+import {Moon, Sunny} from "@element-plus/icons-vue";
 import {useDark, useToggle} from "@vueuse/core";
 
 const canLogin = usePage().props.canLogin;

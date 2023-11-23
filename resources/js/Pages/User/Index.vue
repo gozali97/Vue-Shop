@@ -4,30 +4,31 @@ import App from "@/Layouts/App.vue";
 import {Head, usePage} from "@inertiajs/vue3";
 import Feature from "@/Pages/User/components/Feature.vue";
 import Paginate from "@/Components/Paginate.vue";
-import Testimoni from "@/Pages/User/components/Testimoni.vue";
+import Review from "@/Pages/User/components/Review.vue";
+import Contact from "@/Pages/User/components/Contact.vue";
+import {Top} from "@element-plus/icons-vue";
 
 const sampleImage = [
     {
         id: 1,
         name: 'Sample 1',
         href: '#',
-        imageSrc: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cHJvZHVjdHxlbnwwfHwwfHx8MA%3D%3D',
+        imageSrc: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqEWgS0uxxEYJ0PsOb2OgwyWvC0Gjp8NUdPw&usqp=CAU',
     },{
         id: 2,
         name: 'Sample 2',
         href: '#',
-        imageSrc: 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fHByb2R1Y3R8ZW58MHx8MHx8fDA%3D',
+        imageSrc: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqEWgS0uxxEYJ0PsOb2OgwyWvC0Gjp8NUdPw&usqp=CAU',
     },{
         id: 2,
         name: 'Sample 3',
         href: '#',
-        imageSrc: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHByb2R1Y3R8ZW58MHx8MHx8fDA%3D',
+        imageSrc: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqEWgS0uxxEYJ0PsOb2OgwyWvC0Gjp8NUdPw&usqp=CAU',
     }
 ];
 
 defineProps({
-    products:Object,
-    default: () => ({}),
+    products:Object
 });
 
 // const products = usePage().props.products;
@@ -69,16 +70,9 @@ defineProps({
                 </div>
             </div>
         </div>
-        <div data-aos="zoom-in" class="py-6">
-            <el-carousel :interval="4000" type="card" height="300px">
-                <el-carousel-item v-for="item in products.data" :key="item">
-                    <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHByb2R1Y3R8ZW58MHx8MHx8fDA%3D" alt="">
-                    <h3 class="flex p-10justify-center items-center">{{ item.title }}</h3>
-                </el-carousel-item>
-            </el-carousel>
-        </div>
-
-        <Testimoni/>
+        <Review/>
         <Feature/>
+        <Contact/>
+
     </App>
 </template>

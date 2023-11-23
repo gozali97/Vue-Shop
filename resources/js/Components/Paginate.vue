@@ -10,16 +10,16 @@ defineProps({
 });
 </script>
 <template>
-    <ul class="flex">
+    <ul class="flex gap-2">
         <li v-for="(link, index) in products.links">
             <Link v-if="link.label.includes('Previous')"
-                  class="mx-1 flex h-9 w-9 items-center justify-center rounded-full border border-blue-gray-100 bg-transparent p-0 text-sm text-blue-gray-500 transition duration-150 ease-in-out hover:bg-light-300" :href="link.url ? products.prev_page_url : products.first_page_url" aria-label="Previous">
+                  class="mx-1 flex h-9 w-9 items-center justify-center rounded-full border border-blue-gray-100 bg-transparent p-0 text-sm text-blue-gray-700 dark:text-gray-100 transition duration-150 ease-in-out hover:bg-light-300 dark:hover:bg-gray-600" :href="link.url ? products.prev_page_url : products.first_page_url" aria-label="Previous">
                 <el-icon>
                     <DArrowLeft />
                 </el-icon>
             </Link>
                 <Link v-else-if="link.label.includes('Next')"
-                  class="mx-1 flex h-9 w-9 items-center justify-center rounded-full border border-blue-gray-100 bg-transparent p-0 text-sm text-blue-gray-500 transition duration-150 ease-in-out hover:bg-light-300" :href="link.url ? products.next_page_url : products.last_page_url" aria-label="Previous">
+                  class="mx-1 flex h-9 w-9 items-center justify-center rounded-full border border-blue-gray-100 bg-transparent p-0 text-sm text-blue-gray-700 dark:text-gray-100 transition duration-150 ease-in-out hover:bg-light-300 dark:hover:bg-gray-600" :href="link.url ? products.next_page_url : products.last_page_url" aria-label="Previous">
                     <el-icon>
                         <DArrowRight />
                     </el-icon>
