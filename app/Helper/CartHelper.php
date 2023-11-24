@@ -9,17 +9,21 @@ use Illuminate\Support\Arr;
 
 class CartHelper
 {
-    public static function getCount()
+    public static function getCount(): int
     {
-        if ($user = auth()->user()){
-            return Cart::whereUserId($user->id)->sum('quantity');
+        if ($user = auth()->user()) {
+            return Cart::whereUserId($user->id)->count(); //sum('quantity')
+        } else {
+            return array_reduce(self::getCookieCartItems(), fn ($carry) => $carry + 1, 0);
         }
     }
 
-    public static function getCartItem(){
+    public static function getCartItems(){
 
-        if($user = auth()->user()){
+        if ($user = auth()->user()) {
             return Cart::whereUserId($user->id)->get()->map(fn (Cart $item) => ['product_id' => $item->product_id, 'quantity' => $item->quantity]);
+        } else {
+            return self::getCookieCartItems();
         }
     }
 
@@ -27,8 +31,9 @@ class CartHelper
         return json_decode(request()->cookie('cart_items', '[]'), true);
     }
 
-    public static function setCookieCartItems(){
-        Cookie::queue('cart_items', fn(int $carry, array $item)=>$carry + $item['quantity'],0);
+    public static function setCookieCartItems(array $cartItems)
+    {
+        Cookie::queue('cart_items', json_encode($cartItems), 60*24*30);
     }
 
     public static function saveCookieCartItems(){

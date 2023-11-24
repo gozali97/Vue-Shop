@@ -2,9 +2,12 @@
 
 namespace App\Http\Middleware;
 
+use App\Helper\CartHelper;
 use App\Http\Resources\CartResource;
 use App\Models\Banner;
+use App\Models\Brand;
 use App\Models\Cart;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tightenco\Ziggy\Ziggy;
@@ -36,6 +39,8 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $bannerGlobal = Banner::where('isActive', 1)->get();
+        $categoryGlobal = Category::all();
+        $brandGlobal = Brand::all();
 
         return [
             ...parent::share($request),
@@ -46,7 +51,7 @@ class HandleInertiaRequests extends Middleware
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],
-            'cart' => new CartResource(Cart::getProductsAndCartItems()),
+            'cart' => new CartResource(CartHelper::getProductsAndCartItems()),
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),
@@ -54,6 +59,8 @@ class HandleInertiaRequests extends Middleware
                 'info' => fn () => $request->session()->get('info')
             ],
             'banner_global' => cache()->rememberForever('banner_global', fn () => $bannerGlobal),
+            'category_global' => cache()->rememberForever('category_global', fn () => $categoryGlobal),
+            'brand_global' => cache()->rememberForever('brand_global', fn () => $brandGlobal),
             'canLogin' => app('router')->has('login'),
             'canRegister' => app('router')->has('register'),
             'laravelVersion' => Application::VERSION,

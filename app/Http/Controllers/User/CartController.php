@@ -33,7 +33,7 @@ class CartController extends Controller
     {
         $quantity = $request->post('quantity', 1);
         $user = $request->user();
-dd($request->all());
+
         if($user){
             $cartItem = Cart::where(['user_id' => $user->id, 'product_id' => $product->id])->first();
 

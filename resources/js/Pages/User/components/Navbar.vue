@@ -2,10 +2,12 @@
 import { Link, usePage } from '@inertiajs/vue3';
 import {Moon, Sunny} from "@element-plus/icons-vue";
 import {useDark, useToggle} from "@vueuse/core";
+import {computed} from "vue";
 
 const canLogin = usePage().props.canLogin;
 const canRegister = usePage().props.canRegister;
 const auth = usePage().props.auth;
+const cart = computed(() => usePage().props.cart);
 
 const isDark = useDark();
 </script>
@@ -17,6 +19,7 @@ const isDark = useDark();
                 <img src="https://images.unsplash.com/photo-1496200186974-4293800e2c20?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bG9nbyUyMGVsZWt0cm9uaWt8ZW58MHx8MHx8fDI%3D" class="h-8 dark:border dark:border-gray-100" alt="Flowbite Logo" />
                 <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">V-Shop</span>
             </Link>
+
             <div v-if="canLogin" class="flex items-center md:order-2">
                 <el-switch
                     v-model="isDark"
@@ -38,7 +41,7 @@ const isDark = useDark();
                         <div
                             class="absolute inline-flex items-center text-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full top-0 right-0 dark:border-gray-900">
                             <span class="mt-0.5">
-                                0
+                                {{cart.data.count}}
                             </span>
                             </div>
                     </Link>

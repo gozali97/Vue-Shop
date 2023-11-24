@@ -26,10 +26,8 @@ class UserController extends Controller
             ->latest()
             ->paginate(12)
             ->withQueryString();
-        $categories = Category::limit(6)->get();
         return Inertia::render('User/Index',[
             'products' => $products,
-            'categories' => $categories,
             'search' => $request->search
         ]);
     }
