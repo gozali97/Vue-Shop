@@ -21,7 +21,7 @@ class ProductFactory extends Factory
             'slug' => str($title)->slug(),
             'price' => rand(100, 1000),
             'quantity' => rand(1, 15),
-            'category_id' => rand(1, 4),
+            'category_id' => rand(1, 5),
             'brand_id' => rand(1, 6),
             'inStock' => 1,
             'published' => 1,

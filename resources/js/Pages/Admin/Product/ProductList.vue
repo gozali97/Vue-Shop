@@ -8,7 +8,7 @@
 
     defineProps({
         products: Object,
-        brands: Object,
+        brands: Object
     });
     // const products = usePage().props.products;
     // const brands = usePage().props.brands;

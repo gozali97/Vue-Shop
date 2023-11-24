@@ -33,7 +33,7 @@ class CartController extends Controller
     {
         $quantity = $request->post('quantity', 1);
         $user = $request->user();
-
+dd($request->all());
         if($user){
             $cartItem = Cart::where(['user_id' => $user->id, 'product_id' => $product->id])->first();
 
@@ -68,7 +68,7 @@ class CartController extends Controller
             CartHelper::setCookieCartItems($cartItems);
         }
 
-        return redirect()->back()->with('success', 'cart added successfully');
+//        return redirect()->back()->with('success', 'cart added successfully');
     }
 
     /**
@@ -90,16 +90,55 @@ class CartController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Product $product)
     {
-        //
+        $quantity = $request->integer('quantity');
+        $user = $request->user();
+
+        if($user){
+            Cart::query()->where(['user_id' => $user->id, 'product_id' => $product->id])
+                ->update(['quantitry' => $quantity]);
+
+        }else{
+            $cartItems = CartHelper::getCookieCartItems();
+            foreach ($cartItems as $item){
+                if($item['product_id'] == $product->id){
+                    $item['quantity'] = $quantity;
+                    break;
+                }
+            }
+        }
+
+        return redirect()->back();
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request, Product $product)
     {
-        //
+        $user = $request->user();
+        if($user){
+            Cart::query()->where(['user_id' => $user->id, 'product_id' => $product->id])->first()?->delete();
+            if(Cart::count() <= 0){
+                return redirect()->route('user.home')->with('info', 'your cart is empty');
+            }else{
+                return redirect()->back()->with('success', 'item removed succesfully');
+            }
+        }else{
+            $cartItems = Cart::getCookieCartItems();
+            foreach ($cartItems as $i => &$item) {
+                if ($item['product_id'] === $product->id) {
+                    array_splice($cartItems, $i, 1);
+                    break;
+                }
+            }
+            CartHelper::setCookieCartItems($cartItems);
+            if (count($cartItems) <= 0) {
+                return redirect()->route('user.home')->with('info', 'your cart is empty');
+            } else {
+                return redirect()->back()->with('success', 'item removed successfully');
+            }
+        }
     }
 }

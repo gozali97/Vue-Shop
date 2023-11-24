@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Banner;
+use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -25,9 +26,10 @@ class UserController extends Controller
             ->latest()
             ->paginate(12)
             ->withQueryString();
-//        return $products;
+        $categories = Category::limit(6)->get();
         return Inertia::render('User/Index',[
             'products' => $products,
+            'categories' => $categories,
             'search' => $request->search
         ]);
     }
@@ -67,9 +69,9 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
-        //
+
     }
 
     /**
