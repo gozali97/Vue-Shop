@@ -51,6 +51,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::controller(BannerController::class)->group(function () {
         Route::get('banner/index', 'index')->name('admin.banner.index');
         Route::post('banner/store', 'store')->name('admin.banner.store');
+        Route::put('banner/update/{id}', 'update')->name('admin.product.update');
+        Route::delete('banner/image/{slug}', 'deleteImage')->name('admin.banner.image.delete');
+        Route::delete('banner/destroy/{id}','destroy')->name('admin.banner.destroy');
+
+
     });
 
     //category

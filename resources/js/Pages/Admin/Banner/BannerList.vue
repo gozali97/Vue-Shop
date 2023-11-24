@@ -26,6 +26,7 @@ const openAddModal = () => {
     isAddItem.value = true;
     isEditItem.value = false;
     dialogVisible.value = true;
+    resetFormData();
 }
 
 const openEditModal = (item) => {
@@ -34,6 +35,7 @@ const openEditModal = (item) => {
     name.value = item.name;
     slug.value = item.slug;
     image.value = item.image;
+    images.value = '';
     isActive.value = item.isActive;
 
     isEditItem.value = true;
@@ -44,9 +46,10 @@ const openEditModal = (item) => {
 
 const dialogPreviewImg = ref(false)
 const dialogImageUrl = ref('')
+const images = ref([])
 const handleFileChange = (file) => {
     // console.log(file)
-    image.value.push(file)
+    images.value.push(file)
 }
 
 const handlePictureCardPreview = (file) => {
@@ -63,6 +66,8 @@ const deleteImage = async (slug) => {
     try {
         await router.delete('/admin/banner/image/' + slug, {
             onSuccess: (page) => {
+                // dialogVisible.value = false;
+                resetImage();
                 ElNotification({
                     title: 'Success',
                     message: page.props.flash.success,
@@ -75,6 +80,11 @@ const deleteImage = async (slug) => {
     }
 }
 
+const resetImage = () => {
+    image.value = '';
+    images.value = '';
+};
+
 //search
 const search = ref(searchValue);
 watch(search, (value) =>{
@@ -85,22 +95,21 @@ watch(search, (value) =>{
         }
     );
 });
-
-const images = ref([])
-function onFileChange(e){
-    this.image = e.target.files[0];
-    images.value = this.image
-
-}
+// function onFileChange(e){
+//     console.log(e.target.files[0])
+//     image.value = e.target.files[0];
+// }
 
 //add product method
 const AddBanner = async ()=>{
-console.log(images)
+
     const formData = new FormData();
     formData.append('name', name.value);
     formData.append('isActive', isActive.value);
-    formData.append('image', images);
-
+    // formData.append('image', image.value);
+    for (const image of images.value) {
+        formData.append('image', image.raw);
+    }
     try {
         await router.post('store', formData, {
             onSuccess: page => {
@@ -119,6 +128,62 @@ console.log(images)
 }
 
 const updateBanner = async () => {
+    const formData = new FormData();
+    formData.append('name', name.value);
+    formData.append('isActive', isActive.value);
+    formData.append("_method", 'PUT');
+    // formData.append('image', image.value);
+    for (const image of images.value) {
+        formData.append('image', image.raw);
+    }
+
+    try {
+        await router.post('update/' + id.value, formData, {
+            onSuccess: (page) => {
+                dialogVisible.value = false;
+                resetFormData();
+                ElNotification({
+                    title: 'Success',
+                    message: page.props.flash.success,
+                    type: 'success',
+                })
+            }
+        })
+    } catch (err) {
+        console.log(err)
+    }
+
+}
+
+//delete product method
+const deleteBanner = (item, index) => {
+    Swal.fire({
+        title: 'Are you Sure',
+        text: "This actions cannot undo!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'No',
+        confirmButtonText: 'Yes, delete!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            try {
+                router.delete('destroy/' + item.id, {
+                    onSuccess: (page) => {
+                        this.delete(item, index);
+                        ElNotification({
+                            title: 'Success',
+                            message: page.props.flash.success,
+                            type: 'success',
+                        })
+                    }
+                })
+            } catch (err) {
+                console.log(err)
+            }
+        }
+    })
 }
 
 const resetFormData = () => {
@@ -126,7 +191,10 @@ const resetFormData = () => {
     name.value = '';
     isActive.value = false;
     image.value = '';
+    images.value = '';
 };
+
+
 </script>
 
 <template>
@@ -135,13 +203,10 @@ const resetFormData = () => {
         <el-dialog
             v-model="dialogVisible"
             class="text-gray-800 dark:bg-gray-800 dark:text-gray-200"
-            width="80%"
+            width="30%"
         >
             <h3 class="text-lg text-gray-800 dark:text-white mb-6">{{ isEditItem ? 'Edit Banner' : 'Add Banner' }}</h3>
             <form @submit.prevent="isEditItem ? updateBanner() : AddBanner()">
-
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div>
                         <div class="mb-6">
                             <label for="form_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Price</label>
                             <input type="text" v-model="name" name="name" id="form_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Product price" required>
@@ -154,11 +219,19 @@ const resetFormData = () => {
                                 <option value="0">Non Active</option>
                             </select>
                         </div>
-                    </div>
-                    <div class="mt-6 mx-6">
-                        <div>
-                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="file_input">Upload file</label>
-                            <input class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="file_input" name="image" type="file" v-on:change="onFileChange">
+                    <div class="mt-6">
+                        <div class="relative z-0 w-full mb-6 group">
+                            <el-upload v-model:file-list="images" accept=".jpg, .jpeg, .png" list-type="picture-card" :limit="1" multiple
+                                       :on-preview="handlePictureCardPreview" :on-remove="handleRemove" :on-change="handleFileChange">
+                                <el-icon>
+                                    <Plus />
+                                </el-icon>
+
+                                <el-dialog v-model="dialogPreviewImg">
+                                    <img w-full :src="dialogImageUrl" alt="Preview Image" />
+                                </el-dialog>
+                            </el-upload>
+
                         </div>
                         <div v-if="image" class="flex flex-nowrap mb-8 ">
                             <div class="relative w-32 h-32 ">
@@ -171,7 +244,6 @@ const resetFormData = () => {
                             </div>
                         </div>
                     </div>
-                </div>
 
                 <div class="flex w-full justify-center items-center gap-4">
                     <button type="button" @click="dialogVisible = false" class="text-white bg-black hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-900 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-dark dark:hover:bg-slate-900 dark:focus:ring-black">Cancel</button>
@@ -306,7 +378,7 @@ const resetFormData = () => {
                                         </li>
                                     </ul>
                                     <div class="py-1">
-                                        <a href="#" @click="deleteProduct(item, index)" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Delete</a>
+                                        <a href="#" @click="deleteBanner(item, index)" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Delete</a>
                                     </div>
                                 </div>
                             </td>
