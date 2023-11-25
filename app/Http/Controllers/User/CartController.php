@@ -4,9 +4,15 @@ namespace App\Http\Controllers\User;
 
 use App\Helper\CartHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CartResource;
+use App\Http\Resources\ProductResource;
 use App\Models\Cart;
 use App\Models\Product;
+use App\Models\ProductImage;
+use App\Models\UserAddress;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Inertia\Inertia;
 
 class CartController extends Controller
 {
@@ -38,7 +44,8 @@ class CartController extends Controller
             $cartItem = Cart::where(['user_id' => $user->id, 'product_id' => $product->id])->first();
 
             if($cartItem){
-                $cartItem->increment($quantity);
+                $cartItem->quantity += 1;
+                $cartItem->save();
             }else{
                 Cart::create([
                     'user_id' => $user->id,
@@ -46,7 +53,7 @@ class CartController extends Controller
                     'quantity' => 1
                 ]);
             }
-
+            Cache::forget('carts_global_count');
         }else{
             $cartItems = CartHelper::getCookieCartItems();
             $isProductExist = false;
@@ -74,9 +81,42 @@ class CartController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request, Product $product)
     {
-        //
+        $user = $request->user();
+        if($user){
+            $carts = Cart::with('product', 'product_image')->where('user_id', $user->id)->get();
+            $userAddress = UserAddress::where('user_id', $user->id)->where('isMain', 1)->first();
+            $count = Cart::where('user_id', $user->id)->count();
+            $total = 0;
+            foreach ($carts as $cart){
+                $item = Product::find($cart->product_id);
+                $sum = $item->price * $cart->quantity;
+                $total += $sum;
+            }
+
+            if($cart->count() > 0) {
+                return Inertia::render('User/CartList', [
+                    'carts' => $carts,
+                    'count' => $count,
+                    'total' => $total,
+                    'userAddress' => $userAddress
+                ]);
+            }else {
+                return redirect()->back()->with('errors', 'You dont have product in cart');
+            }
+        }else{
+            $cart = CartHelper::getCookieCartItems();
+            if(count($cart) > 0){
+                $cart = new CartResource(CartHelper::getProductsAndCartItems());
+                return Inertia::render('User/CartList',[
+                    'cart' => $cart,
+                ]);
+            }else{
+                return redirect()->back()->with('errors', 'You dont have product in cart');
+            }
+        }
+
     }
 
     /**
@@ -97,7 +137,7 @@ class CartController extends Controller
 
         if($user){
             Cart::query()->where(['user_id' => $user->id, 'product_id' => $product->id])
-                ->update(['quantitry' => $quantity]);
+                ->update(['quantity' => $quantity]);
 
         }else{
             $cartItems = CartHelper::getCookieCartItems();
@@ -108,8 +148,8 @@ class CartController extends Controller
                 }
             }
         }
-
-        return redirect()->back();
+        Cache::forget('carts_global_count');
+        return redirect()->back()->with('success', 'Success add quantity');
     }
 
     /**
@@ -120,8 +160,9 @@ class CartController extends Controller
         $user = $request->user();
         if($user){
             Cart::query()->where(['user_id' => $user->id, 'product_id' => $product->id])->first()?->delete();
+            Cache::forget('carts_global_count');
             if(Cart::count() <= 0){
-                return redirect()->route('user.home')->with('info', 'your cart is empty');
+                return redirect()->route('home')->with('info', 'your cart is empty');
             }else{
                 return redirect()->back()->with('success', 'item removed succesfully');
             }
@@ -135,7 +176,7 @@ class CartController extends Controller
             }
             CartHelper::setCookieCartItems($cartItems);
             if (count($cartItems) <= 0) {
-                return redirect()->route('user.home')->with('info', 'your cart is empty');
+                return redirect()->route('home')->with('info', 'your cart is empty');
             } else {
                 return redirect()->back()->with('success', 'item removed successfully');
             }

@@ -1,7 +1,7 @@
 <script setup>
 
 import App from "@/Layouts/App.vue";
-import {Head, router, Link} from "@inertiajs/vue3";
+import {Head, router, Link, usePage} from "@inertiajs/vue3";
 import Feature from "@/Pages/User/components/Feature.vue";
 import Paginate from "@/Components/Paginate.vue";
 import Review from "@/Pages/User/components/Review.vue";
@@ -9,6 +9,8 @@ import Contact from "@/Pages/User/components/Contact.vue";
 import {ElNotification} from "element-plus";
 import CategoryList from "@/Pages/User/components/CategoryList.vue";
 import BrandList from "@/Pages/User/components/BrandList.vue";
+import Header from "@/Pages/User/components/Header.vue";
+import Panel from "@/Pages/User/components/Panel.vue";
 
 
 const sampleImage = [
@@ -32,7 +34,7 @@ const sampleImage = [
 defineProps({
     products:Object,
 });
-
+const auth = usePage().props.auth;
 const addToCart = (product) => {
     // console.log(product)
     router.post(route('cart.store', product), {
@@ -53,6 +55,8 @@ const addToCart = (product) => {
 <template>
     <App>
         <Head title="Dashboard" />
+        <Header/>
+        <Panel/>
         <CategoryList/>
         <div class="bg-white dark:bg-gray-900">
             <div class="mx-auto flex flex-col w-full px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
@@ -69,7 +73,7 @@ const addToCart = (product) => {
                         </el-carousel>
 
                         <div class="px-4 mt-4">
-                                <Link :href="route('user.home')" class="text-gray-900 font-semibold dark:text-gray-100">
+                                <Link :href="route('cart.show', product)" class="text-gray-900 font-semibold dark:text-gray-100">
                                         <span aria-hidden="true" class="absolute inset-0 " />
                                         {{ product.title }}
                                 </Link>
@@ -82,13 +86,20 @@ const addToCart = (product) => {
                             <div class="flex gap-2 items-center">
                                 <div>
                                     <div class="bg-blue-600 p-2 rounded-full transition duration-200 hover:scale-110 hover:bg-blue-800">
-                                        <a @click="addToCart(product)" class="cursor-pointer">
+                                        <a v-if="auth.user" @click="addToCart(product)" class="cursor-pointer">
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                                  stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-white">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                       d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
                                             </svg>
                                         </a>
+                                        <Link v-else :href="route('login')" class="cursor-pointer">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                 stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-white">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                      d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                                            </svg>
+                                        </Link>
                                     </div>
                                 </div>
                             </div>

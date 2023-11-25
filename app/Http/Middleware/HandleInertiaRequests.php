@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tightenco\Ziggy\Ziggy;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Cache;
 
 
 class HandleInertiaRequests extends Middleware
@@ -42,6 +43,11 @@ class HandleInertiaRequests extends Middleware
         $categoryGlobal = Category::all();
         $brandGlobal = Brand::all();
 
+        $cartBelongsToRequestUser = 0;
+        if ($request->user()) {
+            $cartBelongsToRequestUser = Cart::where('user_id', $request->user()->id)->count();
+        }
+
         return [
             ...parent::share($request),
             'auth' => [
@@ -52,6 +58,7 @@ class HandleInertiaRequests extends Middleware
                 'location' => $request->url(),
             ],
             'cart' => new CartResource(CartHelper::getProductsAndCartItems()),
+            'carts_global_count' => $request->user() ? Cache::rememberForever('carts_global_count', fn () => $cartBelongsToRequestUser) : '',
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),

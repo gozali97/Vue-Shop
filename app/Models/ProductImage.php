@@ -14,4 +14,8 @@ class ProductImage extends Model
     public function productImage(){
         return $this->belongsTo(Product::class, 'product_id');
     }
+
+    public function cartProductImage(){
+        return $this->belongsTo(Cart::class, 'product_id', 'product_id');
+    }
 }

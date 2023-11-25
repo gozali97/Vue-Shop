@@ -41,8 +41,6 @@ onUnmounted(() => {
     <div class="antialiased bg-gray-50 dark:bg-gray-900" @scroll="handleScroll">
         <Navbar/>
         <div class="mt-12">
-            <Header/>
-            <Panel/>
             <main>
                 <slot />
             </main>

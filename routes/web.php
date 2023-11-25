@@ -15,7 +15,7 @@ use Inertia\Inertia;
 
 //user route
 Route::controller(UserController::class)->group(function () {
-    Route::get('/',  'index')->name('user.home');
+    Route::get('/',  'index')->name('home');
 });
 
 Route::get('/dashboard', function () {
@@ -30,7 +30,7 @@ Route::middleware('auth')->group(function () {
 
 //add to cart
 Route::prefix('cart')->controller(CartController::class)->group(function (){
-    Route::get('view', 'view')->name('cart.view');
+    Route::get('show', 'show')->name('cart.show');
     Route::post('store/{product}', 'store')->name('cart.store');
     Route::patch('update/{product}', 'update')->name('cart.update');
     Route::delete('delete/{product}', 'destroy')->name('cart.delete');

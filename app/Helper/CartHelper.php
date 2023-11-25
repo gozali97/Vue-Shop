@@ -95,4 +95,14 @@ class CartHelper
         $cartItems = Arr::keyBy($cartItems, 'product_id');
         return [$products, $cartItems];
     }
+
+    public static function getDataCarts(){
+        if($user = auth()->user()) {
+            $cartItems = Cart::whereUserId($user->id)->get()->map(fn(Cart $item) => ['product_id' => $item->product_id, 'quantity' => $item->quantity]);
+            $ids = Arr::pluck($cartItems, 'product_id');
+            $products = Product::whereIn('id', $ids)->with('product_images')->get();
+            $cartItems = Arr::keyBy($cartItems, 'product_id');
+            return [$products, $cartItems];
+        }
+    }
 }

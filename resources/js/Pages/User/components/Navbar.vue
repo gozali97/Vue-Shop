@@ -13,18 +13,18 @@ onMounted(() => {
 const canLogin = usePage().props.canLogin;
 const canRegister = usePage().props.canRegister;
 const auth = usePage().props.auth;
-const cart = computed(() => usePage().props.cart);
+const carts_global_count = computed(() => usePage().props.carts_global_count)
 
 const isDark = useDark();
 
 </script>
 
 <template>
-    <nav class="bg-white dark:bg-gray-900 fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
+    <nav class="bg-white dark:bg-gray-900 fixed w-full z-20 top-0 start-0 scroll-smooth dark:border-gray-600">
         <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-            <Link :href="route('user.home')" class="flex items-center space-x-3  rtl:space-x-reverse">
+            <Link :href="route('home')" class="flex items-center space-x-3  rtl:space-x-reverse">
                 <img src="https://images.unsplash.com/photo-1496200186974-4293800e2c20?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bG9nbyUyMGVsZWt0cm9uaWt8ZW58MHx8MHx8fDI%3D" class="h-8 dark:border dark:border-gray-100" alt="Flowbite Logo" />
-                <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">V-Shop</span>
+                <span class="self-center text-2xl hidden lg:flex font-semibold whitespace-nowrap dark:text-white">V-Shop</span>
             </Link>
             <div v-if="canLogin" class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
                 <el-switch
@@ -34,8 +34,8 @@ const isDark = useDark();
                     style="--el-switch-on-color: #13ce66; --el-switch-off-color: #427D9D"
                     :inactive-action-icon="Sunny"
                 />
-                <div class="mr-6">
-                    <Link :href="route('user.home')"
+                <div v-if="auth.user" class="mr-6">
+                    <Link :href="route('cart.show')"
                           class="relative mr-4 inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 dark:text-white rounded-lg focus:ring-4 focus:outline-none">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                              stroke="currentColor" class="w-6 h-6 ">
@@ -46,7 +46,7 @@ const isDark = useDark();
                         <div
                             class="absolute inline-flex items-center text-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full top-0 right-0 dark:border-gray-900">
                             <span class="mt-0.5">
-                                {{cart.data.count}}
+                                {{ carts_global_count }}
                             </span>
                         </div>
                     </Link>
@@ -101,7 +101,7 @@ const isDark = useDark();
             <div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-sticky">
                 <ul class="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
                     <li>
-                        <a href="#" class="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500" aria-current="page">Home</a>
+                        <Link :href="route('home')" :class="route().current('home') ? 'md:text-blue-700' : 'md:text-gray-800'" class="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:p-0 md:dark:text-blue-500" aria-current="page">Home</Link>
                     </li>
                     <li>
                         <a href="#" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">About</a>
