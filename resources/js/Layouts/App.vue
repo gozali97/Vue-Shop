@@ -40,18 +40,21 @@ onUnmounted(() => {
 <template>
     <div class="antialiased bg-gray-50 dark:bg-gray-900" @scroll="handleScroll">
         <Navbar/>
-        <Header/>
-        <Panel/>
-        <main>
-            <slot />
-        </main>
-        <Footer/>
-        <div class="fixed -bottom-6 right-0 p-4 m-20">
-            <button @click="scrollToTop" :class="['bg-blue-600 hover:bg-blue-700 rounded-full px-3 py-3 transition ease-in-out duration-150 hover:mb-1 animate-pulse', { hidden: isHidden }]">
+        <div class="mt-12">
+            <Header/>
+            <Panel/>
+            <main>
+                <slot />
+            </main>
+            <Footer/>
+            <div class="fixed -bottom-6 right-0 p-4 m-20">
+                <button @click="scrollToTop" :class="['bg-blue-600 hover:bg-blue-700 rounded-full px-3 py-3 transition ease-in-out duration-150 hover:mb-1 animate-pulse', { hidden: isHidden }]">
                 <span class="justify-center flex items-center text-white">
                 <el-icon><Top /></el-icon>
                 </span>
-            </button>
+                </button>
+            </div>
         </div>
+
     </div>
 </template>

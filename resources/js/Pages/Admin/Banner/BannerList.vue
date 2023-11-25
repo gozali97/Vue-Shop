@@ -1,7 +1,7 @@
 <script setup>
 import Pagination from "@/Components/Pagination.vue";
 import {router, usePage} from "@inertiajs/vue3";
-import {ref, watch} from "vue";
+import {computed, ref, watch} from "vue";
 import {Plus} from "@element-plus/icons-vue";
 import Select from "@/Components/Select.vue";
 import {ElNotification} from "element-plus";
@@ -21,6 +21,11 @@ const name = ref('');
 const slug = ref('');
 const image = ref('');
 const isActive = ref(false);
+const disabled = ref(true)
+
+const getDefaultImage = () => {
+    return '../../images/no_image.jpg';
+};
 
 const openAddModal = () => {
     isAddItem.value = true;
@@ -214,13 +219,12 @@ const resetFormData = () => {
                         <div class="mb-6">
                             <label for="form_active" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
                             <select id="form_active" name="form_active" v-model="isActive" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                                <option value="">Select a option</option>
-                                <option value="1">Active</option>
+                                <option value="1" selected>Active</option>
                                 <option value="0">Non Active</option>
                             </select>
                         </div>
                     <div class="mt-6">
-                        <div class="relative z-0 w-full mb-6 group">
+                        <div class="relative z-0 w-full mb-6 group" :class="image ? 'hidden' : ''">
                             <el-upload v-model:file-list="images" accept=".jpg, .jpeg, .png" list-type="picture-card" :limit="1" multiple
                                        :on-preview="handlePictureCardPreview" :on-remove="handleRemove" :on-change="handleFileChange">
                                 <el-icon>
@@ -231,16 +235,15 @@ const resetFormData = () => {
                                     <img w-full :src="dialogImageUrl" alt="Preview Image" />
                                 </el-dialog>
                             </el-upload>
-
                         </div>
                         <div v-if="image" class="flex flex-nowrap mb-8 ">
                             <div class="relative w-32 h-32 ">
-                                <img class="w-24 h-20 rounded" :src="image" alt="">
+                                <img class="w-48 h-32 rounded-lg border" :src="image" alt="">
                                 <span
-                                    class="absolute top-0 right-8 transform -translate-y-1/2 w-3.5 h-3.5 bg-red-400 border-2 border-white dark:border-gray-800 rounded-full">
-                            <span @click="deleteImage(slug)"
-                                  class="text-white text-xs font-bold absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer">x</span>
-                        </span>
+                                    class="absolute top-0 -right-2 transform -translate-y-1/2 w-6 h-6 bg-red-400 border-2 border-white dark:border-gray-800 rounded-full">
+                                        <span @click="deleteImage(slug)"
+                                              class="text-white text-lg font-bold absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer">x</span>
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -349,7 +352,8 @@ const resetFormData = () => {
                             <td class="px-4 py-3">{{index+1}}</td>
                             <th scope="row" class="px-4 py-3 font-medium dark:text-gray-200 text-gray-900 whitespace-nowrap">{{item.name}}</th>
                             <td class="px-4 py-3">
-                                <img class="w-16 h-10 rounded" :src="item.image" :aria-label="item.name"/>
+                                <img v-if="item.image" class="w-16 h-10 rounded" :src="item.image" :aria-label="item.name"/>
+                                <img v-else class="w-16 h-10 rounded" :src="getDefaultImage()"/>
                             </td>
                             <td class="px-4 py-3">
                                 <td class="px-4 py-3">
