@@ -29,7 +29,7 @@ Route::middleware('auth')->group(function () {
 });
 
 //add to cart
-Route::prefix('cart')->controller(CartController::class)->group(function (){
+Route::prefix('cart')->controller(CartController::class)->middleware('auth')->group(function (){
     Route::get('show', 'show')->name('cart.show');
     Route::post('store/{product}', 'store')->name('cart.store');
     Route::patch('update/{product}', 'update')->name('cart.update');
