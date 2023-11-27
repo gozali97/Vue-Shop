@@ -21,44 +21,45 @@ Route::controller(UserController::class)->group(function () {
     Route::get('/',  'index')->name('home');
 });
 
-Route::controller(\App\Http\Controllers\User\ProductController::class)->group(function () {
-    Route::get('/product',  'index')->name('product.index');
-    Route::get('/product/view/{product:slug}',  'show')->name('product.view');
-});
-
-//Route::get('/dashboard', function () {
-//    return Inertia::render('Dashboard');
-//})->middleware(['auth', 'verified'])->name('dashboard');
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-});
 
-Route::middleware('auth')->group(function () {
-    Route::get('/address', [AddressController::class, 'index'])->name('address');
-    Route::post('/address/store', [AddressController::class, 'store'])->name('address.store');
-    Route::put('/address/update/{id}', [AddressController::class, 'update'])->name('address.update');
-    Route::delete('/address/delete/{id}', [AddressController::class, 'delete'])->name('address.delete');
-});
+    Route::controller(\App\Http\Controllers\User\ProductController::class)->group(function () {
+        Route::get('/product',  'index')->name('product.index');
+        Route::get('/product/view/{product:slug}',  'show')->name('product.view');
+    });
 
-Route::middleware('auth')->group(function () {
+    Route::controller(AddressController::class)->group(function () {
+        Route::get('/address', 'index')->name('address');
+        Route::post('/address/store', 'store')->name('address.store');
+        Route::put('/address/update/{id}', 'update')->name('address.update');
+        Route::delete('/address/delete/{id}', 'delete')->name('address.delete');
+
+
+        Route::get('/address/city/{id}', 'getCity')->name('address.getCity');
+    });
+    Route::get('/address/province', [AddressController::class, 'getProvince'])->name('address.getProvince');
+    Route::get('/address/{prov_id}/city', [AddressController::class, 'getCity'])->name('address.getCity');
+
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    //add to cart
+    Route::prefix('cart')->controller(CartController::class)->group(function (){
+        Route::get('show', 'show')->name('cart.show');
+        Route::post('store/{product}', 'store')->name('cart.store');
+        Route::patch('update/{product}', 'update')->name('cart.update');
+        Route::delete('delete/{product}', 'destroy')->name('cart.delete');
+    });
+
+    Route::prefix('checkout')->controller(CheckoutController::class)->group(function (){
+        Route::post('order', 'store')->name('checkout.store');
+    });
 });
 
-//add to cart
-Route::prefix('cart')->controller(CartController::class)->middleware('auth')->group(function (){
-    Route::get('show', 'show')->name('cart.show');
-    Route::post('store/{product}', 'store')->name('cart.store');
-    Route::patch('update/{product}', 'update')->name('cart.update');
-    Route::delete('delete/{product}', 'destroy')->name('cart.delete');
-});
 
-
-//add to cart
-Route::prefix('checkout')->controller(CheckoutController::class)->middleware('auth')->group(function (){
-    Route::post('order', 'store')->name('checkout.store');
-});
 //end user route
 
 //admin route

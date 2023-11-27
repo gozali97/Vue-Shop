@@ -21,7 +21,6 @@ class DatabaseSeeder extends Seeder
             ProductSeeder::class,
             UserSeeder::class,
             BannerSeeder::class,
-            ProvinceSeeder::class,
         ]);
     }
 }

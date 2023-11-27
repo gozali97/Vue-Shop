@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\User\AddressController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +18,6 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('/address/province', [AddressController::class, 'getProvince'])->name('address.getProvince');
+Route::get('/address/{prov_id}/city', [AddressController::class, 'getCity'])->name('address.getCity');
