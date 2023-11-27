@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\User\AddressController;
 use App\Http\Controllers\User\CartController;
 use App\Http\Controllers\User\CheckoutController;
 use App\Http\Controllers\User\DashboardController;
@@ -30,6 +31,13 @@ Route::controller(\App\Http\Controllers\User\ProductController::class)->group(fu
 //})->middleware(['auth', 'verified'])->name('dashboard');
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/address', [AddressController::class, 'index'])->name('address');
+    Route::post('/address/store', [AddressController::class, 'store'])->name('address.store');
+    Route::put('/address/update/{id}', [AddressController::class, 'update'])->name('address.update');
+    Route::delete('/address/delete/{id}', [AddressController::class, 'delete'])->name('address.delete');
 });
 
 Route::middleware('auth')->group(function () {
