@@ -2,7 +2,7 @@
 import {computed, onMounted} from 'vue'
 import { initFlowbite } from 'flowbite'
 import { Link, usePage } from '@inertiajs/vue3';
-import {useDark} from "@vueuse/core";
+import { useDark, useToggle } from '@vueuse/core';
 import {Moon, Sunny} from "@element-plus/icons-vue";
 
 // initialize components based on data attribute selectors
@@ -16,24 +16,30 @@ const auth = usePage().props.auth;
 const carts_global_count = computed(() => usePage().props.carts_global_count)
 
 const isDark = useDark();
+const toggleDark = useToggle(isDark);
 
 </script>
 
 <template>
-    <nav class="bg-white dark:bg-gray-900 fixed w-full z-20 top-0 start-0 scroll-smooth dark:border-gray-600">
+    <nav class="bg-white dark:bg-gray-800 fixed w-full z-20 top-0 start-0 scroll-smooth dark:border-gray-600">
         <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
             <Link :href="route('home')" class="flex items-center space-x-3  rtl:space-x-reverse">
-                <img src="https://images.unsplash.com/photo-1496200186974-4293800e2c20?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bG9nbyUyMGVsZWt0cm9uaWt8ZW58MHx8MHx8fDI%3D" class="h-8 dark:border dark:border-gray-100" alt="Flowbite Logo" />
-                <span class="self-center text-2xl hidden lg:flex font-semibold whitespace-nowrap dark:text-white">V-Shop</span>
+                <img :src="`/images/logo.png`" class="h-6 lg:h-8" alt="Logo" />
+                <span class="self-center text-sm lg:text-2xl font-semibold whitespace-nowrap dark:text-white">V-Shop</span>
             </Link>
             <div v-if="canLogin" class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-                <el-switch
-                    v-model="isDark"
-                    class="mr-3 mt-1 cursor-pointer"
-                    :active-action-icon="Moon"
-                    style="--el-switch-on-color: #13ce66; --el-switch-off-color: #427D9D"
-                    :inactive-action-icon="Sunny"
-                />
+<!--                <el-switch-->
+<!--                    v-model="isDark"-->
+<!--                    class="mr-3 mt-1 cursor-pointer"-->
+<!--                    :active-action-icon="Moon"-->
+<!--                    style="&#45;&#45;el-switch-on-color: #13ce66; &#45;&#45;el-switch-off-color: #427D9D"-->
+<!--                    :inactive-action-icon="Sunny"-->
+<!--                />-->
+                <button @click="toggleDark()" type="button" class="focus:outline-none font-medium rounded-full font-semibold text-sm px-3 text-center inline-flex items-center mr-4" :class="isDark ? 'text-gray-100' : 'text-yellow-500'">
+                    <el-icon v-if="isDark" :size="20"><Moon /></el-icon>
+                    <el-icon v-else :size="20"><Sunny /></el-icon>
+                </button>
+
                 <div v-if="auth.user" class="mr-6">
                     <Link :href="route('cart.show')"
                           class="relative mr-4 inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 dark:text-white rounded-lg focus:ring-4 focus:outline-none">
@@ -99,9 +105,12 @@ const isDark = useDark();
                 </button>
             </div>
             <div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-sticky">
-                <ul class="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+                <ul class="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-800 dark:border-gray-700">
                     <li>
-                        <Link :href="route('home')" :class="route().current('home') ? 'md:text-blue-700' : 'md:text-gray-800'" class="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:p-0 md:dark:text-blue-500" aria-current="page">Home</Link>
+                        <Link :href="route('home')" :class="route().current('home') ? 'md:text-blue-700 md:dark:text-blue-500' : 'md:text-gray-800 md:dark:text-gray-100'" class="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:p-0 md:dark:text-blue-500" aria-current="page">Home</Link>
+                    </li>
+                    <li>
+                        <Link :href="route('product.index')" :class="route().current('product.index') ? 'md:text-blue-700 md:dark:text-blue-500' : 'md:text-gray-800 md:dark:text-gray-100'" class="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:p-0" aria-current="page">Product</Link>
                     </li>
                     <li>
                         <a href="#" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">About</a>

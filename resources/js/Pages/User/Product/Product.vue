@@ -1,35 +1,53 @@
 <script setup>
-
 import App from "@/Layouts/App.vue";
 import {Head, Link, router, usePage} from "@inertiajs/vue3";
-import Feature from "@/Pages/User/components/Feature.vue";
-import Review from "@/Pages/User/components/Review.vue";
-import Contact from "@/Pages/User/components/Contact.vue";
-import {ElNotification} from "element-plus";
-import CategoryList from "@/Pages/User/components/CategoryList.vue";
-import BrandList from "@/Pages/User/components/BrandList.vue";
-import Header from "@/Pages/User/components/Header.vue";
-import Panel from "@/Pages/User/components/Panel.vue";
-import Product from "@/Pages/User/Product/Product.vue";
 import Paginate from "@/Components/Paginate.vue";
-
+import {ElNotification} from "element-plus";
 defineProps({
-    products:Object,
-});
-const auth = usePage().props.auth;
+    products: Object,
+})
 
+const sampleImage = [
+    {
+        id: 1,
+        name: 'Sample 1',
+        href: '#',
+        imageSrc: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqEWgS0uxxEYJ0PsOb2OgwyWvC0Gjp8NUdPw&usqp=CAU',
+    },{
+        id: 2,
+        name: 'Sample 2',
+        href: '#',
+        imageSrc: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqEWgS0uxxEYJ0PsOb2OgwyWvC0Gjp8NUdPw&usqp=CAU',
+    },{
+        id: 2,
+        name: 'Sample 3',
+        href: '#',
+        imageSrc: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqEWgS0uxxEYJ0PsOb2OgwyWvC0Gjp8NUdPw&usqp=CAU',
+    }
+];
+
+const auth = usePage().props.auth;
+const addToCart = (product) => {
+    // console.log(product)
+    router.post(route('cart.store', product), {
+        onSuccess: (page) => {
+            if (page.props.flash.success) {
+                ElNotification({
+                    title: 'Success',
+                    message: page.props.flash.success,
+                    type: 'success',
+                })
+            }
+        },
+    })
+}
 </script>
 
 <template>
-    <App>
-        <Head title="Dashboard" />
-        <Header/>
-        <Panel/>
-        <CategoryList/>
+        <Head title="Product" />
         <div class="bg-white dark:bg-gray-900">
-            <div class="mx-auto flex flex-col w-full px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
-                <h2 class="text-2xl font-bold tracking-tight text-gray-900">Latest Product List</h2>
-                <div class="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8 ">
+            <div class="mx-auto flex flex-col w-full px-4 sm:px-6 lg:px-8">
+                <div class="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8 ">
                     <div v-for="product in products.data" :key="product.id" class="shadow-lg rounded-lg p-4">
                         <el-carousel :interval="5000" trigger="click" class="rounded-lg">
                             <el-carousel-item  v-if="product.product_images.length" v-for="(pimg, index) in product.product_images" :key="index">
@@ -72,19 +90,8 @@ const auth = usePage().props.auth;
 
                 </div>
                 <div data-aos="fade-left" class="mt-10 flex justify-end gap-3">
-                    <Link :href="route('product.index')" class="cursor-pointer inline-flex transition hover:text-gray-700 duration-150 hover:scale-110">
-                       <span class="mr-2">More product</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                        </svg>
-                    </Link>
+                    <Paginate :products="products"/>
                 </div>
             </div>
         </div>
-        <BrandList/>
-        <Review/>
-        <Feature/>
-        <Contact/>
-
-    </App>
 </template>

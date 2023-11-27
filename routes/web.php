@@ -18,6 +18,11 @@ Route::controller(UserController::class)->group(function () {
     Route::get('/',  'index')->name('home');
 });
 
+Route::controller(\App\Http\Controllers\User\ProductController::class)->group(function () {
+    Route::get('/product',  'index')->name('product.index');
+    Route::get('/product/view/{product:slug}',  'show')->name('product.view');
+});
+
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');

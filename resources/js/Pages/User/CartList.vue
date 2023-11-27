@@ -116,13 +116,12 @@ function submit() {
 
 <template>
     <App>
-
         <Head title="Cart" />
         <section class="text-gray-600 body-font relative">
-            <div class="container px-5 py-24 mx-auto flex sm:flex-nowrap flex-wrap">
+            <div class="container px-5 py-24 mx-auto flex sm:flex-nowrap flex-wrap gap-4">
                 <div class="relative overflow-x-auto sm:rounded-lg lg:w-2/3 md:w-1/2 lg:px-6">
-                    <h1 class="text-xl font-semibold mb-4">Your Cart</h1>
-                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 rounded-lg">
+                    <h1 class="text-xl font-semibold mb-4 dark:text-white">Your Cart</h1>
+                    <table class="w-full text-sm text-left overflow-y-scroll max-h-[800px] text-gray-500 dark:text-gray-400 rounded-lg">
                         <thead class="text-xs text-white uppercase bg-gray-800 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <th scope="col" class="px-16 py-3 rounded-tl-lg">
@@ -177,7 +176,7 @@ function submit() {
                                 </div>
                             </td>
                             <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                                {{Number(item.product.price).toLocaleString() }}
+                                Rp. {{Number(item.product.price).toLocaleString() }}
                             </td>
                             <td class="px-6 py-4">
                                 <a @click="deleteProduct    (item)" class="font-medium cursor-pointer text-red-600 dark:text-red-500 hover:underline">
@@ -190,28 +189,28 @@ function submit() {
                     </table>
                 </div>
 
-                <div class="lg:w-1/3 md:w-1/2 bg-white px-6 flex flex-col md:ml-auto w-full md:py-8 mt-8 md:mt-0">
-                    <h2 class="text-gray-900 text-2xl mb-1 font-bold">Summary</h2>
-                    <p class="leading-relaxed font-semibold mb-5 text-gray-600">Total : Rp. {{ Number(total).toLocaleString() }}</p>
-                    <h2 class="text-gray-900 text-xl mb-1 font-semibold">Shipping Address</h2>
-                    <p class="leading-relaxed mb-5 text-gray-600">Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
-                    <p class="leading-relaxed mb-5 text-gray-600">or you can add below</p>
+                <div class="lg:w-1/3 md:w-1/2 bg-white px-6 flex flex-col md:ml-auto w-full h-fit md:py-8 mt-8 md:mt-0 dark:bg-gray-800 rounded-lg">
+                    <h2 class="text-gray-900 text-2xl mb-1 font-bold dark:text-white">Summary</h2>
+                    <p class="leading-relaxed font-semibold mb-5 text-gray-600 dark:text-gray-200">Total : Rp. {{ Number(total).toLocaleString() }}</p>
+                    <h2 class="text-gray-900 text-xl mb-1 font-semibold dark:text-white">Shipping Address</h2>
+                    <p class="leading-relaxed mb-5 text-gray-600 dark:text-gray-200">Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+                    <p class="leading-relaxed mb-5 text-gray-600 dark:text-gray-200">or you can add below</p>
                     <div class="relative mb-4">
-                        <label for="name" class="leading-7 text-sm text-gray-600">Name</label>
+                        <label for="name" class="leading-7 text-sm text-gray-600 dark:text-gray-100">Name</label>
                         <input type="text" id="name" name="name" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
                     </div>
                     <div class="relative mb-4">
-                        <label for="email" class="leading-7 text-sm text-gray-600">Email</label>
+                        <label for="email" class="leading-7 text-sm text-gray-600 dark:text-gray-100">Email</label>
                         <input type="email" id="email" name="email" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
                     </div>
                     <div class="relative mb-4">
-                        <label for="message" class="leading-7 text-sm text-gray-600">Message</label>
+                        <label for="message" class="leading-7 text-sm text-gray-600 dark:text-gray-100">Message</label>
                         <textarea id="message" name="message" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 h-32 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"></textarea>
                     </div>
                     <button class="text-white bg-blue-600 border-0 py-2 px-6 focus:outline-none hover:bg-blue-700 rounded text-lg">Checkout</button>
-                    <p class="text-xs text-gray-500 mt-3">Continue shopping</p>
+                    <p class="text-xs text-gray-500 mt-3 dark:text-gray-100">Continue shopping</p>
                 </div>
-            </div>
+                </div>
         </section>
     </App>
 </template>
