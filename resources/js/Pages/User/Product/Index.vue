@@ -1,7 +1,7 @@
 <script setup>
 import App from "@/Layouts/App.vue";
-import {Head, Link, usePage} from "@inertiajs/vue3";
-import { ref } from 'vue'
+import {Head, router, useForm} from "@inertiajs/vue3";
+import {ref, watch} from 'vue'
 import {
     Dialog,
     DialogPanel,
@@ -17,7 +17,8 @@ import {
 } from '@headlessui/vue'
 import { XMarkIcon } from '@heroicons/vue/24/outline'
 import { ChevronDownIcon, FunnelIcon, MinusIcon, PlusIcon, Squares2X2Icon } from '@heroicons/vue/20/solid'
-import Product from "@/Pages/User/Product/Product.vue";
+import ProductList from "@/Pages/User/Product/ProductList.vue";
+import SecondaryButton from "@/Components/SecondaryButton.vue";
 
 const sortOptions = [
     { name: 'Most Popular', href: '#', current: true },
@@ -33,48 +34,52 @@ const subCategories = [
     { name: 'Hip Bags', href: '#' },
     { name: 'Laptop Sleeves', href: '#' },
 ]
-const filters = [
-    {
-        id: 'color',
-        name: 'Color',
-        options: [
-            { value: 'white', label: 'White', checked: false },
-            { value: 'beige', label: 'Beige', checked: false },
-            { value: 'blue', label: 'Blue', checked: true },
-            { value: 'brown', label: 'Brown', checked: false },
-            { value: 'green', label: 'Green', checked: false },
-            { value: 'purple', label: 'Purple', checked: false },
-        ],
-    },
-    {
-        id: 'category',
-        name: 'Category',
-        options: [
-            { value: 'new-arrivals', label: 'New Arrivals', checked: false },
-            { value: 'sale', label: 'Sale', checked: false },
-            { value: 'travel', label: 'Travel', checked: true },
-            { value: 'organization', label: 'Organization', checked: false },
-            { value: 'accessories', label: 'Accessories', checked: false },
-        ],
-    },
-    {
-        id: 'size',
-        name: 'Size',
-        options: [
-            { value: '2l', label: '2L', checked: false },
-            { value: '6l', label: '6L', checked: false },
-            { value: '12l', label: '12L', checked: false },
-            { value: '18l', label: '18L', checked: false },
-            { value: '20l', label: '20L', checked: false },
-            { value: '40l', label: '40L', checked: true },
-        ],
-    },
-]
+
+const filterPrices = useForm({
+    prices: [0, 100000]
+})
+//method for price filter
+const priceFilter = () => {
+    filterPrices.transform((data) => ({
+        ...data,
+        prices: {
+            from: filterPrices.prices[0],
+            to: filterPrices.prices[1]
+        }
+    })).get('product', {
+        preserveState: true,
+        replace: true
+    })
+}
 
 const mobileFiltersOpen = ref(false)
 defineProps({
     products: Object,
+    categories: Object,
+    brands: Object,
 })
+
+//filter brands and categories
+const selectedBrands = ref([])
+const selectedCategories = ref([])
+
+watch(selectedBrands, () => {
+    updateFilteredProducts()
+})
+watch(selectedCategories, () => {
+    updateFilteredProducts()
+})
+
+function updateFilteredProducts() {
+    router.get('product', {
+        brands: selectedBrands.value,
+        categories: selectedCategories.value
+    }, {
+        preserveState: true,
+        replace: true
+    })
+}
+
 </script>
 
 <template>
@@ -101,29 +106,49 @@ defineProps({
                                     </div>
 
                                     <!-- Filters -->
-                                    <form class="mt-4 border-t border-gray-200">
-                                        <h3 class="sr-only">Categories</h3>
-                                        <ul role="list" class="px-2 py-3 font-medium text-gray-900">
-                                            <li v-for="category in subCategories" :key="category.name">
-                                                <a :href="category.href" class="block px-2 py-3">{{ category.name }}</a>
-                                            </li>
-                                        </ul>
-
-                                        <Disclosure as="div" v-for="section in filters" :key="section.id" class="border-t border-gray-200 px-4 py-6" v-slot="{ open }">
-                                            <h3 class="-mx-2 -my-3 flow-root">
-                                                <DisclosureButton class="flex w-full items-center justify-between bg-white px-2 py-3 text-gray-400 hover:text-gray-500">
-                                                    <span class="font-medium text-gray-900">{{ section.name }}</span>
+                                    <form class="mt-4 border-t border-gray-200 mx-4">
+                                        <Disclosure as="div" class="border-b border-gray-200 py-6" v-slot="{ open }">
+                                            <h3 class="-my-3 flow-root">
+                                                <DisclosureButton class="flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500">
+                                                    <span class="font-medium text-gray-900">Brand</span>
                                                     <span class="ml-6 flex items-center">
-                          <PlusIcon v-if="!open" class="h-5 w-5" aria-hidden="true" />
-                          <MinusIcon v-else class="h-5 w-5" aria-hidden="true" />
-                        </span>
+                                              <PlusIcon v-if="!open" class="h-5 w-5" aria-hidden="true" />
+                                              <MinusIcon v-else class="h-5 w-5" aria-hidden="true" />
+                                            </span>
                                                 </DisclosureButton>
                                             </h3>
                                             <DisclosurePanel class="pt-6">
-                                                <div class="space-y-6">
-                                                    <div v-for="(option, optionIdx) in section.options" :key="option.value" class="flex items-center">
-                                                        <input :id="`filter-mobile-${section.id}-${optionIdx}`" :name="`${section.id}[]`" :value="option.value" type="checkbox" :checked="option.checked" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
-                                                        <label :for="`filter-mobile-${section.id}-${optionIdx}`" class="ml-3 min-w-0 flex-1 text-gray-500">{{ option.label }}</label>
+                                                <div class="space-y-4">
+                                                    <div v-for="(brand, id) in brands" :key="id" class="flex items-center">
+                                                        <input :id="`filter-${brand.id}`" :value="brand.id" v-model="selectedBrands" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+                                                        <label :for="`filter-${brand.id}`" class="ml-3 text-sm text-gray-600">{{ brand.name }}</label>
+                                                    </div>
+                                                </div>
+                                            </DisclosurePanel>
+                                        </Disclosure>
+
+                                        <!-- category filter -->
+
+                                        <Disclosure as="div" class="border-b border-gray-200 py-6" v-slot="{ open }">
+                                            <h3 class="-my-3 flow-root">
+                                                <DisclosureButton
+                                                    class="flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500">
+                                                    <span class="font-medium text-gray-900">Categories</span>
+                                                    <span class="ml-6 flex items-center">
+                                                <PlusIcon v-if="!open" class="h-5 w-5" aria-hidden="true" />
+                                                <MinusIcon v-else class="h-5 w-5" aria-hidden="true" />
+                                            </span>
+                                                </DisclosureButton>
+                                            </h3>
+                                            <DisclosurePanel class="pt-6">
+                                                <div class="space-y-4">
+                                                    <div v-for="category in categories" :key="category.id"
+                                                         class="flex items-center">
+                                                        <input :id="`filter-${category.id}`" :value="category.id" type="checkbox"
+                                                               v-model="selectedCategories"
+                                                               class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+                                                        <label :for="`filter-${category.id}`" class="ml-3 text-sm text-gray-600">{{
+                                                                category.name }}</label>
                                                     </div>
                                                 </div>
                                             </DisclosurePanel>
@@ -137,33 +162,33 @@ defineProps({
 
                 <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div class="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-24">
-                        <h1 class="text-4xl font-bold tracking-tight text-gray-900">New Arrivals</h1>
+                        <h1 class="text-4xl font-bold tracking-tight text-gray-900">Product List</h1>
 
                         <div class="flex items-center">
-                            <Menu as="div" class="relative inline-block text-left">
-                                <div>
-                                    <MenuButton class="group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900">
-                                        Sort
-                                        <ChevronDownIcon class="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500" aria-hidden="true" />
-                                    </MenuButton>
-                                </div>
+<!--                            <Menu as="div" class="relative inline-block text-left">-->
+<!--                                <div>-->
+<!--                                    <MenuButton class="group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900">-->
+<!--                                        Sort-->
+<!--                                        <ChevronDownIcon class="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500" aria-hidden="true" />-->
+<!--                                    </MenuButton>-->
+<!--                                </div>-->
 
-                                <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
-                                    <MenuItems class="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                        <div class="py-1">
-                                            <MenuItem v-for="option in sortOptions" :key="option.name" v-slot="{ active }">
-                                                <a :href="option.href" :class="[option.current ? 'font-medium text-gray-900' : 'text-gray-500', active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm']">{{ option.name }}</a>
-                                            </MenuItem>
-                                        </div>
-                                    </MenuItems>
-                                </transition>
-                            </Menu>
+<!--                                <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">-->
+<!--                                    <MenuItems class="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none">-->
+<!--                                        <div class="py-1">-->
+<!--                                            <MenuItem v-for="option in sortOptions" :key="option.name" v-slot="{ active }">-->
+<!--                                                <a :href="option.href" :class="[option.current ? 'font-medium text-gray-900' : 'text-gray-500', active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm']">{{ option.name }}</a>-->
+<!--                                            </MenuItem>-->
+<!--                                        </div>-->
+<!--                                    </MenuItems>-->
+<!--                                </transition>-->
+<!--                            </Menu>-->
 
-                            <button type="button" class="-m-2 ml-5 p-2 text-gray-400 hover:text-gray-500 sm:ml-7">
-                                <span class="sr-only">View grid</span>
-                                <Squares2X2Icon class="h-5 w-5" aria-hidden="true" />
-                            </button>
-                            <button type="button" class="-m-2 ml-4 p-2 text-gray-400 hover:text-gray-500 sm:ml-6 lg:hidden" @click="mobileFiltersOpen = true">
+<!--                            <button type="button" class="-m-2 ml-5 p-2 text-gray-400 hover:text-gray-500 sm:ml-7">-->
+<!--                                <span class="sr-only">View grid</span>-->
+<!--                                <Squares2X2Icon class="h-5 w-5" aria-hidden="true" />-->
+<!--                            </button>-->
+                            <button type="button" class="-m-2 ml-4 p-2 mr-2 text-gray-400 hover:text-gray-500 sm:ml-6 lg:hidden" @click="mobileFiltersOpen = true">
                                 <span class="sr-only">Filters</span>
                                 <FunnelIcon class="h-5 w-5" aria-hidden="true" />
                             </button>
@@ -176,28 +201,77 @@ defineProps({
                         <div class="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-4">
                             <!-- Filters -->
                             <form class="hidden lg:block">
-                                <h3 class="sr-only">Categories</h3>
-                                <ul role="list" class="space-y-4 border-b border-gray-200 pb-6 text-sm font-medium text-gray-900">
-                                    <li v-for="category in subCategories" :key="category.name">
-                                        <a :href="category.href">{{ category.name }}</a>
-                                    </li>
-                                </ul>
+                                <h3 class="sr-only">Price</h3>
+<!--                                price filter-->
+                                <div class="flex items-center justify-between space-x-3">
+                                    <div class="basis-1/3">
+                                        <label for="filters-price-from"
+                                               class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+                                            From
+                                        </label>
 
-                                <Disclosure as="div" v-for="section in filters" :key="section.id" class="border-b border-gray-200 py-6" v-slot="{ open }">
+                                        <input type="number" id="filters-price-from" placeholder="Min price"
+                                               v-model="filterPrices.prices[0]"
+                                               class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" />
+                                    </div>
+                                    <div class="basis-1/3">
+                                        <label for="filters-price-to"
+                                               class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+                                            To
+                                        </label>
+
+                                        <input type="number" id="filters-price-to" v-model="filterPrices.prices[1]"
+                                               placeholder="Max price"
+                                               class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" />
+                                    </div>
+                                    <SecondaryButton class="self-end" @click="priceFilter()">
+                                        Ok
+                                    </SecondaryButton>
+                                </div>
+<!--                                end price filter-->
+
+                                <Disclosure as="div" class="border-b border-gray-200 py-6" v-slot="{ open }">
                                     <h3 class="-my-3 flow-root">
                                         <DisclosureButton class="flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500">
-                                            <span class="font-medium text-gray-900">{{ section.name }}</span>
+                                            <span class="font-medium text-gray-900">Brand</span>
                                             <span class="ml-6 flex items-center">
-                      <PlusIcon v-if="!open" class="h-5 w-5" aria-hidden="true" />
-                      <MinusIcon v-else class="h-5 w-5" aria-hidden="true" />
-                    </span>
+                                              <PlusIcon v-if="!open" class="h-5 w-5" aria-hidden="true" />
+                                              <MinusIcon v-else class="h-5 w-5" aria-hidden="true" />
+                                            </span>
                                         </DisclosureButton>
                                     </h3>
                                     <DisclosurePanel class="pt-6">
                                         <div class="space-y-4">
-                                            <div v-for="(option, optionIdx) in section.options" :key="option.value" class="flex items-center">
-                                                <input :id="`filter-${section.id}-${optionIdx}`" :name="`${section.id}[]`" :value="option.value" type="checkbox" :checked="option.checked" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
-                                                <label :for="`filter-${section.id}-${optionIdx}`" class="ml-3 text-sm text-gray-600">{{ option.label }}</label>
+                                            <div v-for="(brand, id) in brands" :key="id" class="flex items-center">
+                                                <input :id="`filter-${brand.id}`" :value="brand.id" v-model="selectedBrands" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+                                                <label :for="`filter-${brand.id}`" class="ml-3 text-sm text-gray-600">{{ brand.name }}</label>
+                                            </div>
+                                        </div>
+                                    </DisclosurePanel>
+                                </Disclosure>
+
+                                <!-- category filter -->
+
+                                <Disclosure as="div" class="border-b border-gray-200 py-6" v-slot="{ open }">
+                                    <h3 class="-my-3 flow-root">
+                                        <DisclosureButton
+                                            class="flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500">
+                                            <span class="font-medium text-gray-900">Categories</span>
+                                            <span class="ml-6 flex items-center">
+                                                <PlusIcon v-if="!open" class="h-5 w-5" aria-hidden="true" />
+                                                <MinusIcon v-else class="h-5 w-5" aria-hidden="true" />
+                                            </span>
+                                        </DisclosureButton>
+                                    </h3>
+                                    <DisclosurePanel class="pt-6">
+                                        <div class="space-y-4">
+                                            <div v-for="category in categories" :key="category.id"
+                                                 class="flex items-center">
+                                                <input :id="`filter-${category.id}`" :value="category.id" type="checkbox"
+                                                       v-model="selectedCategories"
+                                                       class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+                                                <label :for="`filter-${category.id}`" class="ml-3 text-sm text-gray-600">{{
+                                                        category.name }}</label>
                                             </div>
                                         </div>
                                     </DisclosurePanel>
@@ -206,7 +280,7 @@ defineProps({
 
                             <!-- Product grid -->
                             <div class="lg:col-span-3">
-                                <Product :products="products" />
+                                <div class="relative"><ProductList :products="products" /></div>
                             </div>
                         </div>
                     </section>

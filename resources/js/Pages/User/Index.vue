@@ -10,15 +10,29 @@ import CategoryList from "@/Pages/User/components/CategoryList.vue";
 import BrandList from "@/Pages/User/components/BrandList.vue";
 import Header from "@/Pages/User/components/Header.vue";
 import Panel from "@/Pages/User/components/Panel.vue";
-import Product from "@/Pages/User/Product/Product.vue";
+import Product from "@/Pages/User/Product/ProductList.vue";
 import Paginate from "@/Components/Paginate.vue";
 
 defineProps({
     products:Object,
 });
 const auth = usePage().props.auth;
-
+const addToCart = (product) => {
+    // console.log(product)
+    router.post(route('cart.store', product), {
+        onSuccess: (page) => {
+            if (page.props.flash.success) {
+                ElNotification({
+                    title: 'Success',
+                    message: page.props.flash.success,
+                    type: 'success',
+                })
+            }
+        },
+    })
+}
 </script>
+
 
 <template>
     <App>

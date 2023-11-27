@@ -4,6 +4,9 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductDetailResource;
+use App\Http\Resources\ProductResource;
+use App\Models\Brand;
+use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -16,17 +19,19 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $products = Product::query()
-            ->with(['category', 'brand', 'product_images'])
-            ->when($request->search, function ($query, $search) {
-                $query->where('title', 'like', '%' . $search . '%')
-                    ->OrWhere('description', 'like', '%' . $search . '%')
-                    ->OrWhere('price', 'like', '%' . $search . '%');
-            })
+            ->with(['category', 'brand', 'product_images']);
+        $filterProducts = $products->filtered()
             ->latest()
             ->paginate(12)
             ->withQueryString();
+
+        $categories = Category::all();
+        $brands = Brand::all();
+
         return Inertia::render('User/Product/Index',[
-            'products' => $products,
+            'products' => $filterProducts,
+            'categories' => $categories,
+            'brands' => $brands,
             'search' => $request->search
         ]);
     }

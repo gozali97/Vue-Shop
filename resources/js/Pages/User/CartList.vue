@@ -7,6 +7,10 @@ import {ElNotification} from "element-plus";
 const carts = computed(() => usePage().props.carts)
 const total = computed(() => usePage().props.total)
 
+defineProps({
+    userAddress:Object,
+})
+
 
 const reduceQuantity = async (item) => {
     if (item.quantity === 1) {
@@ -89,6 +93,7 @@ const form = reactive({
     type: null,
 
 })
+
 const formFilled = computed(()=>{
     return (form.address1 !== null &&
         form.state !== null &&
@@ -142,7 +147,7 @@ function submit() {
                         </tr>
                         </thead>
                         <tbody>
-                        <tr v-for="(item, index) in carts" :key="index" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                        <tr v-if="carts" v-for="(item, index) in carts" :key="index" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                             <td class="p-4">
                                 <div class="w-32 max-w-32">
                                     <img class="w-32 h-36" v-if="item.product_image.length > 0"
@@ -185,30 +190,77 @@ function submit() {
                                 </a>
                             </td>
                         </tr>
+                        <tr v-else>
+                            <td colspan="5"  class="px-6 flex justify-center items-center font-semibold text-gray-900 dark:text-white">
+                              <p class="mt-6 text-red-500">The Cart is currently empty</p>
+                            </td>
+                        </tr>
                         </tbody>
                     </table>
+                    <p class="mt-8 text-lg font-medium">Shipping Methods</p>
+                    <form class="mt-5 grid gap-6">
+                        <div class="relative">
+                            <input class="peer hidden" id="radio_1" type="radio" name="radio" checked />
+                            <span class="peer-checked:border-gray-700 absolute right-4 top-1/2 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white"></span>
+                            <label class="peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-gray-50 flex cursor-pointer select-none rounded-lg border border-gray-300 p-4" for="radio_1">
+                                <img class="w-14 object-contain" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/330px-No-Image-Placeholder.svg.png" alt="" />
+                                <div class="ml-5">
+                                    <span class="mt-2 font-semibold">Fedex Delivery</span>
+                                    <p class="text-slate-500 text-sm leading-6">Delivery: 2-4 Days</p>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="relative">
+                            <input class="peer hidden" id="radio_2" type="radio" name="radio" checked />
+                            <span class="peer-checked:border-gray-700 absolute right-4 top-1/2 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white"></span>
+                            <label class="peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-gray-50 flex cursor-pointer select-none rounded-lg border border-gray-300 p-4" for="radio_2">
+                                <img class="w-14 object-contain" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/330px-No-Image-Placeholder.svg.png" alt="" />
+                                <div class="ml-5">
+                                    <span class="mt-2 font-semibold">Fedex Delivery</span>
+                                    <p class="text-slate-500 text-sm leading-6">Delivery: 2-4 Days</p>
+                                </div>
+                            </label>
+                        </div>
+                    </form>
                 </div>
 
                 <div class="lg:w-1/3 md:w-1/2 bg-white px-6 flex flex-col md:ml-auto w-full h-fit md:py-8 mt-8 md:mt-0 dark:bg-gray-800 rounded-lg">
                     <h2 class="text-gray-900 text-2xl mb-1 font-bold dark:text-white">Summary</h2>
-                    <p class="leading-relaxed font-semibold mb-5 text-gray-600 dark:text-gray-200">Total : Rp. {{ Number(total).toLocaleString() }}</p>
+                    <p v-if="total" class="leading-relaxed font-semibold mb-5 text-gray-600 dark:text-gray-200">Total : Rp. {{ Number(total).toLocaleString() }}</p>
+                    <p v-else class="leading-relaxed font-semibold mb-5 text-gray-600 dark:text-gray-200">Total : Rp. 0</p>
                     <h2 class="text-gray-900 text-xl mb-1 font-semibold dark:text-white">Shipping Address</h2>
-                    <p class="leading-relaxed mb-5 text-gray-600 dark:text-gray-200">Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+                    <p v-if="userAddress" class="leading-relaxed mb-5 text-gray-600 dark:text-gray-200">{{userAddress.address1}}, {{userAddress.city}}, {{userAddress.zipcode}}</p>
                     <p class="leading-relaxed mb-5 text-gray-600 dark:text-gray-200">or you can add below</p>
-                    <div class="relative mb-4">
-                        <label for="name" class="leading-7 text-sm text-gray-600 dark:text-gray-100">Name</label>
-                        <input type="text" id="name" name="name" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
-                    </div>
-                    <div class="relative mb-4">
-                        <label for="email" class="leading-7 text-sm text-gray-600 dark:text-gray-100">Email</label>
-                        <input type="email" id="email" name="email" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
-                    </div>
-                    <div class="relative mb-4">
-                        <label for="message" class="leading-7 text-sm text-gray-600 dark:text-gray-100">Message</label>
-                        <textarea id="message" name="message" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 h-32 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"></textarea>
-                    </div>
-                    <button class="text-white bg-blue-600 border-0 py-2 px-6 focus:outline-none hover:bg-blue-700 rounded text-lg">Checkout</button>
-                    <p class="text-xs text-gray-500 mt-3 dark:text-gray-100">Continue shopping</p>
+                    <form @submit.prevent="submit">
+                        <div class="relative mb-4">
+                            <label for="address1" class="leading-7 text-sm text-gray-600 dark:text-gray-100">Address 1</label>
+                            <input type="text" id="address1" name="address1" v-model="form.address1" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                        </div>
+                        <div class="relative mb-4">
+                            <label for="city" class="leading-7 text-sm text-gray-600 dark:text-gray-100">City</label>
+                            <input type="text" id="city" name="city" v-model="form.city" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                        </div>
+                        <div class="relative mb-4">
+                            <label for="email" class="leading-7 text-sm text-gray-600">State</label>
+                            <input type="text" id="email" name="state" v-model="form.state"
+                                   class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                        </div>
+                        <div class="relative mb-4">
+                            <label for="zipcode" class="leading-7 text-sm text-gray-600 dark:text-gray-100">Zipcode</label>
+                            <input type="text" id="zipcode" name="zipcode" v-model="form.zipcode" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                        </div>
+                        <div class="relative mb-4">
+                            <label for="country_code" class="leading-7 text-sm text-gray-600 dark:text-gray-100">Coutry Code</label>
+                            <input type="text" id="country_code" name="country_code" v-model="form.country_code" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                        </div>
+                        <div class="relative mb-4">
+                            <label for="type" class="leading-7 text-sm text-gray-600 dark:text-gray-100">Address Type</label>
+                            <input type="text" id="type" name="type" v-model="form.type" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                        </div>
+                        <button v-if="formFilled" type="submit" class="text-white bg-blue-600 border-0 py-2 px-6 focus:outline-none w-full hover:bg-blue-700 rounded-lg text-lg">Checkout</button>
+                        <button v-else type="submit" class="text-white w-full bg-blue-600 border-0 py-2 px-6 focus:outline-none hover:bg-blue-700 rounded-lg text-lg">Add Address</button>
+                    </form>
+                        <p class="text-xs text-gray-500 mt-3 dark:text-gray-100">Continue shopping</p>
                 </div>
                 </div>
         </section>

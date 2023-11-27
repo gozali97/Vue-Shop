@@ -1,8 +1,8 @@
 <script setup>
-import App from "@/Layouts/App.vue";
-import {Head, Link, router, usePage} from "@inertiajs/vue3";
+import {Head, router, usePage} from "@inertiajs/vue3";
 import Paginate from "@/Components/Paginate.vue";
 import {ElNotification} from "element-plus";
+import Link from "@/Components/Link.vue";
 defineProps({
     products: Object,
 })
@@ -59,10 +59,11 @@ const addToCart = (product) => {
                         </el-carousel>
 
                         <div class="px-4 mt-4">
-                            <Link :href="route('product.view', product.slug)" class="text-gray-900 font-semibold dark:text-gray-100">
-                                <span aria-hidden="true" class="absolute inset-0 " />
-                                {{ product.title }}
+                            <div>
+                                <Link :href="route('product.view', product.slug)" class="text-gray-900 font-semibold dark:text-gray-100">
+                                <span aria-hidden="true" class="line-clamp-1">{{ product.title }}</span>
                             </Link>
+                            </div>
                         </div>
                         <div class="flex justify-between px-4">
                             <div>

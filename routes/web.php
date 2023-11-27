@@ -8,6 +8,8 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\CartController;
+use App\Http\Controllers\User\CheckoutController;
+use App\Http\Controllers\User\DashboardController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -23,9 +25,12 @@ Route::controller(\App\Http\Controllers\User\ProductController::class)->group(fu
     Route::get('/product/view/{product:slug}',  'show')->name('product.view');
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+//Route::get('/dashboard', function () {
+//    return Inertia::render('Dashboard');
+//})->middleware(['auth', 'verified'])->name('dashboard');
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -41,6 +46,11 @@ Route::prefix('cart')->controller(CartController::class)->middleware('auth')->gr
     Route::delete('delete/{product}', 'destroy')->name('cart.delete');
 });
 
+
+//add to cart
+Route::prefix('checkout')->controller(CheckoutController::class)->middleware('auth')->group(function (){
+    Route::post('order', 'store')->name('checkout.store');
+});
 //end user route
 
 //admin route

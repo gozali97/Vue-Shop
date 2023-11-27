@@ -89,21 +89,28 @@ class CartController extends Controller
             $userAddress = UserAddress::where('user_id', $user->id)->where('isMain', 1)->first();
             $count = Cart::where('user_id', $user->id)->count();
             $total = 0;
-            foreach ($carts as $cart){
-                $item = Product::find($cart->product_id);
-                $sum = $item->price * $cart->quantity;
-                $total += $sum;
-            }
 
-            if($cart->count() > 0) {
+            if ($carts->count() != 0){
+                foreach ($carts as $cart){
+                    $item = Product::find($cart->product_id);
+                    $sum = $item->price * $cart->quantity;
+                    $total += $sum;
+                }
+
+                if($cart->count() > 0) {
+                    return Inertia::render('User/CartList', [
+                        'carts' => $carts,
+                        'count' => $count,
+                        'total' => $total,
+                        'userAddress' => $userAddress
+                    ]);
+                }else {
+                    return redirect()->back()->with('errors', 'You dont have product in cart');
+                }
+            }else{
                 return Inertia::render('User/CartList', [
-                    'carts' => $carts,
-                    'count' => $count,
-                    'total' => $total,
                     'userAddress' => $userAddress
                 ]);
-            }else {
-                return redirect()->back()->with('errors', 'You dont have product in cart');
             }
         }else{
             $cart = CartHelper::getCookieCartItems();
