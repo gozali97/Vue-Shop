@@ -1,13 +1,13 @@
 <script setup>
 import Pagination from "@/Components/Pagination.vue";
 import {Head, router, usePage} from "@inertiajs/vue3";
-import {ref, watch, onMounted} from "vue";
+import {ref, watch, onMounted, computed} from "vue";
 import Select from "@/Components/Select.vue";
 import {ElNotification} from "element-plus";
 import App from "@/Layouts/App.vue";
 import {Plus} from "@element-plus/icons-vue";
 
-const address = usePage().props.address;
+const address = computed(() => usePage().props.address)
 const provinces = usePage().props.provinces;
 
 const searchValue = usePage().props.search;
@@ -20,7 +20,6 @@ const id = ref('');
 const type = ref('');
 const address1 = ref('');
 const address2 = ref('');
-const province = ref('');
 const city = ref('');
 const isMain = ref(false);
 const postcode = ref('');
@@ -65,13 +64,15 @@ const openEditModal = (item) => {
     isAddItem.value = false;
     dialogVisible.value = true;
 
+    getCityByProvince(prov_id.value)
+
 }
 
 //search
 const search = ref(searchValue);
 watch(search, (value) =>{
     router.get(
-        "/address/index",
+        "/address",
         {search: value},
         {preserveState: false,
         }
@@ -110,16 +111,18 @@ const AddAddress = async ()=>{
 
 const updateAddress = async () => {
     const formData = new FormData();
-    formData.append('name', name.value);
+    formData.append('address1', address1.value);
+    formData.append('address2', address2.value);
+    formData.append('prov_id', prov_id.value);
+    formData.append('city_id', city_id.value);
+    formData.append('postcode', postcode.value);
+    formData.append('country_code', country_code.value);
     formData.append('isMain', isMain.value);
+    formData.append('type', type.value);
     formData.append("_method", 'PUT');
-    // formData.append('image', image.value);
-    for (const image of images.value) {
-        formData.append('image', image.raw);
-    }
 
     try {
-        await router.post('update/' + id.value, formData, {
+        await router.post('address/update/' + id.value, formData, {
             onSuccess: (page) => {
                 dialogVisible.value = false;
                 resetFormData();
@@ -150,9 +153,9 @@ const deleteAddress = (item, index) => {
     }).then((result) => {
         if (result.isConfirmed) {
             try {
-                router.delete('destroy/' + item.id, {
+                router.delete('address/delete/' + item.id, {
                     onSuccess: (page) => {
-                        this.delete(item, index);
+                        // this.delete(item, index);
                         ElNotification({
                             title: 'Success',
                             message: page.props.flash.success,
@@ -169,10 +172,15 @@ const deleteAddress = (item, index) => {
 
 const resetFormData = () => {
     id.value = '';
-    name.value = '';
+    type.value = '';
+    address1.value = '';
+    address2.value = '';
+    city.value = '';
+    prov_id.value = '';
     isMain.value = false;
-    image.value = '';
-    images.value = '';
+    postcode.value = '';
+    country_code.value = '';
+    city_id.value = '';
 };
 
 

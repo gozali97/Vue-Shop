@@ -17,7 +17,16 @@ class AddressController extends Controller
     public function index(Request $request)
     {
         $id = $request->user()->id;
-        $address  = UserAddress::with('user')->where('user_id', $id)->paginate(10)->withQueryString();
+        $address  = UserAddress::with('user')
+            ->when($request->search, function ($query, $search) {
+                $query->where('type', 'like', '%' . $search . '%')
+                    ->OrWhere('province', 'like', '%' . $search . '%')
+                    ->OrWhere('address1', 'like', '%' . $search . '%')
+                    ->OrWhere('address2', 'like', '%' . $search . '%')
+                    ->OrWhere('city', 'like', '%' . $search . '%');
+            })
+            ->where('user_id', $id)
+            ->paginate(10)->withQueryString();
 
         $con =  Http::withHeaders([
             'key' => '067f3c3070f9ba9652054f7f1eb0e182',
@@ -25,6 +34,8 @@ class AddressController extends Controller
             'Content-Type' => 'application/json',
         ])->get('https://api.rajaongkir.com/starter/province');
         $provinces = $con['rajaongkir']['results'];
+
+
 
         return Inertia::render('User/UserAddress/Index',[
             'address' => $address,
@@ -107,16 +118,46 @@ class AddressController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        //
+        $address = UserAddress::findOrFail($id);
+        $address->type = $request->type;
+        $address->address1 = $request->address1;
+        $address->address2 = $request->address2;
+        $address->isMain = $request->isMain;
+        $address->postcode = $request->postcode;
+        $address->country_code = $request->country_code;
+        $address->city_id = $request->city_id;
+        $address->prov_id = $request->prov_id;
+        $address->user_id = $request->user()->id;
+
+        $response = Http::withHeaders([
+            'key' => '067f3c3070f9ba9652054f7f1eb0e182',
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json',
+        ])->get('https://api.rajaongkir.com/starter/city?id='.$request->city_id.'&province='.$request->prov_id);
+
+        $data = $response['rajaongkir']['results'];
+
+        $address->province = $data['province'];
+        $address->city = $data['city_name'];
+
+        if ($address->save()){
+            return redirect()->route('address')->with('success', 'Address created successfully.');
+        }else{
+            return redirect()->back()->with('errors', 'Failed create address');
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        $address = UserAddress::findOrFail($id);
+        if($address){
+            $address->delete();
+        }
+        return redirect()->route('address')->with('success', 'Product deleted successfully.');
     }
 }

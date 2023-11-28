@@ -9,7 +9,7 @@ const brand_global = usePage().props.brand_global;
     <div class="container-x flex flex-col justify-center items-center mx-auto px-6 bg-white dark:bg-gray-900">
         <div class=" section-title flex justify-between items-center mb-5">
             <div>
-                <h1 data-aos="fade-up" class="text-md lg:text-3xl font-bold text-gray-900">Shop by Brand</h1>
+                <h1 data-aos="fade-up" class="text-md lg:text-3xl font-bold text-gray-900 dark:text-gray-100">Shop by Brand</h1>
             </div>
         </div>
         <div class="flex flex-row items-center justify-center">

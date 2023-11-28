@@ -36,6 +36,7 @@ class CheckoutController extends Controller
      */
     public function store(Request $request)
     {
+        dd($request->all());
         $user = $request->user();
         $carts = $request->carts;
         $products = $request->products;

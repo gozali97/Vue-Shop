@@ -33,7 +33,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/address', 'index')->name('address');
         Route::post('/address/store', 'store')->name('address.store');
         Route::put('/address/update/{id}', 'update')->name('address.update');
-        Route::delete('/address/delete/{id}', 'delete')->name('address.delete');
+        Route::delete('/address/delete/{id}', 'destroy')->name('address.delete');
 
 
         Route::get('/address/city/{id}', 'getCity')->name('address.getCity');

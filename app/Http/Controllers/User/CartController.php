@@ -12,6 +12,7 @@ use App\Models\ProductImage;
 use App\Models\UserAddress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
 
 class CartController extends Controller
@@ -87,6 +88,32 @@ class CartController extends Controller
         if($user){
             $carts = Cart::with('product', 'product_image')->where('user_id', $user->id)->get();
             $userAddress = UserAddress::where('user_id', $user->id)->where('isMain', 1)->first();
+            $shippingCosts = [];
+            if($userAddress){
+                $response = Http::withHeaders([
+                    'key' => env('RAJAONGKIR_API_KEY'),
+                ])->post('https://api.rajaongkir.com/starter/cost', [
+                    'origin' => 501, //yogyakarta
+                    'originType' => 'city',
+                    'destination' => $userAddress->prov_id,
+                    'destinationType' => 'city',
+                    'weight' => '1700',
+                    'courier' => 'jne',
+                ]);
+
+                $costs = $response['rajaongkir']['results'];
+                foreach ($costs as $cost) {
+                    foreach ($cost['costs'] as $val) {
+                        $price = $val['cost'][0]['value'];
+                        $shippingCosts[] = [
+                            'name' => $cost['code'],
+                            'type' => $val['service'],
+                            'price' => $price,
+                        ];
+                    }
+                }
+            }
+
             $count = Cart::where('user_id', $user->id)->count();
             $total = 0;
 
@@ -96,13 +123,14 @@ class CartController extends Controller
                     $sum = $item->price * $cart->quantity;
                     $total += $sum;
                 }
-
+//dd($shippingCosts);
                 if($cart->count() > 0) {
                     return Inertia::render('User/CartList', [
                         'carts' => $carts,
                         'count' => $count,
                         'total' => $total,
-                        'userAddress' => $userAddress
+                        'userAddress' => $userAddress,
+                        'shippings' => $shippingCosts
                     ]);
                 }else {
                     return redirect()->back()->with('errors', 'You dont have product in cart');

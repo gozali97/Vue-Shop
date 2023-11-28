@@ -9,6 +9,7 @@ const total = computed(() => usePage().props.total)
 
 defineProps({
     userAddress:Object,
+    shippings:Object,
 })
 
 
@@ -85,12 +86,23 @@ const deleteProduct = (product) => {
 }
 
 const form = reactive({
+    if(userAddress){
+        const { value } = userAddress;
+        form.address1 = value;
+        form.province = value;
+        form.city = value;
+        form.postcode = value;
+        form.country_code = value;
+        form.type = value;
+        form.shipping = value;
+    },
     address1: null,
-    state: null,
+    province: null,
     city: null,
-    zipcode: null,
+    postcode: null,
     country_code: null,
     type: null,
+    shipping: null,
 
 })
 
@@ -98,7 +110,7 @@ const formFilled = computed(()=>{
     return (form.address1 !== null &&
         form.state !== null &&
         form.city !== null &&
-        form.zipcode !== null &&
+        form.postcode !== null &&
         form.country_code !== null &&
         form.type !== null )
 })
@@ -184,7 +196,7 @@ function submit() {
                                 Rp. {{Number(item.product.price).toLocaleString() }}
                             </td>
                             <td class="px-6 py-4">
-                                <a @click="deleteProduct    (item)" class="font-medium cursor-pointer text-red-600 dark:text-red-500 hover:underline">
+                                <a @click="deleteProduct(item)" class="font-medium cursor-pointer text-red-600 dark:text-red-500 hover:underline">
                                     <el-icon class="mt-2"><DeleteFilled /></el-icon>
                                    <span class="ml-2">Delete</span>
                                 </a>
@@ -197,31 +209,6 @@ function submit() {
                         </tr>
                         </tbody>
                     </table>
-                    <p class="mt-8 text-lg font-medium">Shipping Methods</p>
-                    <form class="mt-5 grid gap-6">
-                        <div class="relative">
-                            <input class="peer hidden" id="radio_1" type="radio" name="radio" checked />
-                            <span class="peer-checked:border-gray-700 absolute right-4 top-1/2 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white"></span>
-                            <label class="peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-gray-50 flex cursor-pointer select-none rounded-lg border border-gray-300 p-4" for="radio_1">
-                                <img class="w-14 object-contain" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/330px-No-Image-Placeholder.svg.png" alt="" />
-                                <div class="ml-5">
-                                    <span class="mt-2 font-semibold">Fedex Delivery</span>
-                                    <p class="text-slate-500 text-sm leading-6">Delivery: 2-4 Days</p>
-                                </div>
-                            </label>
-                        </div>
-                        <div class="relative">
-                            <input class="peer hidden" id="radio_2" type="radio" name="radio" checked />
-                            <span class="peer-checked:border-gray-700 absolute right-4 top-1/2 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white"></span>
-                            <label class="peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-gray-50 flex cursor-pointer select-none rounded-lg border border-gray-300 p-4" for="radio_2">
-                                <img class="w-14 object-contain" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/330px-No-Image-Placeholder.svg.png" alt="" />
-                                <div class="ml-5">
-                                    <span class="mt-2 font-semibold">Fedex Delivery</span>
-                                    <p class="text-slate-500 text-sm leading-6">Delivery: 2-4 Days</p>
-                                </div>
-                            </label>
-                        </div>
-                    </form>
                 </div>
 
                 <div class="lg:w-1/3 md:w-1/2 bg-white px-6 flex flex-col md:ml-auto w-full h-fit md:py-8 mt-8 md:mt-0 dark:bg-gray-800 rounded-lg">
@@ -229,25 +216,40 @@ function submit() {
                     <p v-if="total" class="leading-relaxed font-semibold mb-5 text-gray-600 dark:text-gray-200">Total : Rp. {{ Number(total).toLocaleString() }}</p>
                     <p v-else class="leading-relaxed font-semibold mb-5 text-gray-600 dark:text-gray-200">Total : Rp. 0</p>
                     <h2 class="text-gray-900 text-xl mb-1 font-semibold dark:text-white">Shipping Address</h2>
-                    <p v-if="userAddress" class="leading-relaxed mb-5 text-gray-600 dark:text-gray-200">{{userAddress.address1}}, {{userAddress.city}}, {{userAddress.zipcode}}</p>
+                    <p v-if="userAddress" class="leading-relaxed mb-5 text-gray-600 dark:text-gray-200">{{userAddress.address1}}, {{userAddress.city}}, {{userAddress.postcode}}</p>
                     <p class="leading-relaxed mb-5 text-gray-600 dark:text-gray-200">or you can add below</p>
                     <form @submit.prevent="submit">
+                        <p class="mt-2 text-lg font-medium">Shipping Methods</p>
+                        <div class="my-5 grid gap-6">
+                            <div v-for="(ship, index) in shippings" class="relative">
+                                <input class="peer hidden" key="index" v-model="form.shipping" id="radio_1" type="radio" name="radio" checked />
+                                <span class="peer-checked:border-gray-700 absolute right-4 top-1/2 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white"></span>
+                                <label class="peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-gray-50 flex cursor-pointer select-none rounded-lg border border-gray-300 p-4" for="radio_1">
+                                    <img class="w-14 object-contain" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/330px-No-Image-Placeholder.svg.png" alt="" />
+                                    <div class="ml-5">
+                                        <span class="mt-2 font-semibold capitalize">{{ ship.name }} ({{ship.type}})</span>
+                                        <p class="text-slate-500 text-sm leading-6">Rp. {{Number(ship.price).toLocaleString() }}</p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        <p class="mt-8 text-lg font-medium">Detail Address</p>
                         <div class="relative mb-4">
                             <label for="address1" class="leading-7 text-sm text-gray-600 dark:text-gray-100">Address 1</label>
                             <input type="text" id="address1" name="address1" v-model="form.address1" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                        </div>
+                        <div class="relative mb-4">
+                            <label for="province" class="leading-7 text-sm text-gray-600">Province</label>
+                            <input type="text" id="province" name="province" v-model="form.province"
+                                   class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
                         </div>
                         <div class="relative mb-4">
                             <label for="city" class="leading-7 text-sm text-gray-600 dark:text-gray-100">City</label>
                             <input type="text" id="city" name="city" v-model="form.city" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
                         </div>
                         <div class="relative mb-4">
-                            <label for="email" class="leading-7 text-sm text-gray-600">State</label>
-                            <input type="text" id="email" name="state" v-model="form.state"
-                                   class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
-                        </div>
-                        <div class="relative mb-4">
-                            <label for="zipcode" class="leading-7 text-sm text-gray-600 dark:text-gray-100">Zipcode</label>
-                            <input type="text" id="zipcode" name="zipcode" v-model="form.zipcode" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                            <label for="postcode" class="leading-7 text-sm text-gray-600 dark:text-gray-100">Postcode</label>
+                            <input type="text" id="postcode" name="postcode" v-model="form.postcode" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
                         </div>
                         <div class="relative mb-4">
                             <label for="country_code" class="leading-7 text-sm text-gray-600 dark:text-gray-100">Coutry Code</label>
