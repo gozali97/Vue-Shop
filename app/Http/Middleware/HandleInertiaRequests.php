@@ -45,7 +45,7 @@ class HandleInertiaRequests extends Middleware
 
         $cartBelongsToRequestUser = 0;
         if ($request->user()) {
-            $cartBelongsToRequestUser = Cart::whereUserId($request->user()->id)->count();
+            $cartBelongsToRequestUser = Cart::whereUserId($request->user()->id)->whereNull('paid_at')->count();
         }
 
         return [

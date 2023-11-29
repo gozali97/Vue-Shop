@@ -1,6 +1,7 @@
 <script setup>
 import { Head } from '@inertiajs/vue3';
 import App from "@/Layouts/App.vue";
+import Banner from "@/Pages/User/components/Banner.vue";
 defineProps({
     orders: Array
 })
@@ -9,10 +10,10 @@ defineProps({
 
 <template>
     <Head title="Dashboard" />
-
     <App>
+        <Banner/>
         <div class="w-screen py-10 h-screen">
-            <div class="mx-auto mt-8 max-w-screen-lg px-2">
+            <div class="mx-auto mt-2 max-w-screen-lg px-2">
                 <div class="sm:flex sm:items-center sm:justify-between flex-col sm:flex-row">
                     <p class="flex-1 text-base font-bold text-gray-900">Latest Order</p>
 

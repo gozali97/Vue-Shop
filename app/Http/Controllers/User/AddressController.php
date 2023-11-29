@@ -143,7 +143,7 @@ class AddressController extends Controller
         $address->city = $data['city_name'];
 
         if ($address->save()){
-            return redirect()->route('address')->with('success', 'Address created successfully.');
+            return redirect()->route('address')->with('success', 'Address updated successfully.');
         }else{
             return redirect()->back()->with('errors', 'Failed create address');
         }
@@ -158,6 +158,6 @@ class AddressController extends Controller
         if($address){
             $address->delete();
         }
-        return redirect()->route('address')->with('success', 'Product deleted successfully.');
+        return redirect()->route('address')->with('success', 'Address deleted successfully.');
     }
 }

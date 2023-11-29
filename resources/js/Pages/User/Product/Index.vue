@@ -19,6 +19,7 @@ import { XMarkIcon } from '@heroicons/vue/24/outline'
 import { ChevronDownIcon, FunnelIcon, MinusIcon, PlusIcon, Squares2X2Icon } from '@heroicons/vue/20/solid'
 import ProductList from "@/Pages/User/Product/ProductList.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
+import Banner from "@/Pages/User/components/Banner.vue";
 
 const sortOptions = [
     { name: 'Most Popular', href: '#', current: true },
@@ -87,6 +88,7 @@ function updateFilteredProducts() {
         <Head title="Product" />
         <div class="bg-white">
             <div>
+               <Banner/>
                 <!-- Mobile filter dialog -->
                 <TransitionRoot as="template" :show="mobileFiltersOpen">
                     <Dialog as="div" class="relative z-40 lg:hidden" @close="mobileFiltersOpen = false">

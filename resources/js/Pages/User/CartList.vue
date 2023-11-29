@@ -5,6 +5,7 @@ import {computed, reactive, ref} from "vue";
 import {Head, router, usePage, Link} from "@inertiajs/vue3";
 import {ElNotification} from "element-plus";
 import Select from "@/Components/Select.vue";
+import Banner from "@/Pages/User/components/Banner.vue";
 const carts = computed(() => usePage().props.carts)
 const total = computed(() => usePage().props.total)
 const shippings = computed(() => usePage().props.shippings)
@@ -170,6 +171,7 @@ const AddAddress = async ()=>{
 <template>
     <App>
         <Head title="Cart" />
+        <Banner/>
         <section class="text-gray-600 body-font pb-10">
             <div class="container px-5 pt-12 mx-auto h-screen flex sm:flex-nowrap flex-wrap gap-4">
                 <div class="relative overflow-x-auto sm:rounded-lg lg:w-2/3 md:w-1/2 lg:px-6">
@@ -238,13 +240,14 @@ const AddAddress = async ()=>{
                                 </a>
                             </td>
                         </tr>
-                        <tr v-else>
-                            <td colspan="5"  class="px-6 flex justify-center items-center font-semibold text-gray-900 dark:text-white">
-                              <p class="mt-6 text-red-500">The Cart is currently empty</p>
-                            </td>
-                        </tr>
                         </tbody>
                     </table>
+                    <div v-if="!carts">
+                        <div colspan="5"  class="px-6 flex flex-col justify-center items-center font-semibold text-gray-900 dark:text-white">
+                            <p class="mt-6 text-red-500">The Cart is currently empty</p>
+                            <Link :href="route('product.index')" class="bg-blue-500 text-white px-3 py-0.5 mt-2 rounded-lg shadow">Add Product</Link>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Start modal -->
@@ -323,12 +326,12 @@ const AddAddress = async ()=>{
                     <p v-else class="leading-relaxed font-semibold mb-5 text-gray-600 dark:text-gray-200">Total : Rp. 0</p>
                     <h2 class="text-gray-900 text-xl mb-1 font-semibold dark:text-white">Shipping Address</h2>
                     <p v-if="userAddress" class="leading-relaxed mb-5 text-gray-600 dark:text-gray-200">{{userAddress.address1}}, {{userAddress.city}}, {{userAddress.postcode}}</p>
-                    <button v-else type="button" @click="openAddModal" class="flex items-center justify-center text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
+                    <button v-else type="button" @click="openAddModal" class="flex my-2 items-center justify-center text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
                         <el-icon><Plus /></el-icon>
                         <span class="ml-2"> Add Address</span>
                     </button>
                     <form @submit.prevent="submit">
-                        <div v-if="shippings">
+                        <div v-if="userAddress">
                             <p class="mt-2 text-lg font-medium">Shipping Methods</p>
                             <div class="my-5 grid gap-6">
                                 <div v-for="(ship, index) in shippings" :key="index" class="relative">
@@ -339,6 +342,7 @@ const AddAddress = async ()=>{
                                         :id="'radio_' + index"
                                         type="radio"
                                         name="radio"
+                                        required
                                         :checked="form.shipping === `${ship.name}-${ship.type}-${ship.price}`"
                                     />
                                     <span class="peer-checked:border-gray-700 absolute right-4 top-1/2 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white"></span>

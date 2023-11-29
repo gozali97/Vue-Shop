@@ -15,9 +15,13 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
+            $table->string('order_id');
             $table->decimal('total_price', 20, 2);
             $table->string('status', 45);
-            $table->string('session_id', 255);
+            $table->dateTime('paid_at')->nullable();
+            $table->string('courir');
+            $table->string('courir_type');
+            $table->decimal('courir_price', 20, 2);
             $table->foreignIdFor(UserAddress::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignIdFor(User::class, 'created_by')->nullable();
             $table->foreignIdFor(User::class, 'updated_by')->nullable();

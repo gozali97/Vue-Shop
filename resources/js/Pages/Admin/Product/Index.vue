@@ -13,6 +13,7 @@ defineProps({
 <template>
     <AdminLayout>
             <Head title="Product" />
+
             <ProductList :products="products"  :brands="brands"></ProductList>
     </AdminLayout>
 </template>

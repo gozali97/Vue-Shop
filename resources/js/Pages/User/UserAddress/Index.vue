@@ -6,6 +6,7 @@ import Select from "@/Components/Select.vue";
 import {ElNotification} from "element-plus";
 import App from "@/Layouts/App.vue";
 import {Plus} from "@element-plus/icons-vue";
+import Banner from "@/Pages/User/components/Banner.vue";
 
 const address = computed(() => usePage().props.address)
 const provinces = usePage().props.provinces;
@@ -189,6 +190,7 @@ const resetFormData = () => {
 <template>
     <App>
         <Head title="Address" />
+        <Banner/>
         <div class="h-screen pt-10">
             <section class="bg-gray-50 dark:bg-gray-900 p-3 sm:p-5">
                 <!-- Start modal -->
