@@ -50,6 +50,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('cart')->controller(CartController::class)->group(function (){
         Route::get('show', 'show')->name('cart.show');
         Route::post('store/{product}', 'store')->name('cart.store');
+        Route::post('address', 'addAddress')->name('cart.addAddress');
         Route::patch('update/{product}', 'update')->name('cart.update');
         Route::delete('delete/{product}', 'destroy')->name('cart.delete');
     });

@@ -85,6 +85,13 @@ class CartController extends Controller
     public function show(Request $request, Product $product)
     {
         $user = $request->user();
+        $con =  Http::withHeaders([
+            'key' => '067f3c3070f9ba9652054f7f1eb0e182',
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json',
+        ])->get('https://api.rajaongkir.com/starter/province');
+
+        $provinces = $con['rajaongkir']['results'];
         if($user){
             $carts = Cart::with('product', 'product_image')->where('user_id', $user->id)->get();
             $userAddress = UserAddress::where('user_id', $user->id)->where('isMain', 1)->first();
@@ -123,12 +130,12 @@ class CartController extends Controller
                     $sum = $item->price * $cart->quantity;
                     $total += $sum;
                 }
-//dd($shippingCosts);
                 if($cart->count() > 0) {
                     return Inertia::render('User/CartList', [
                         'carts' => $carts,
                         'count' => $count,
                         'total' => $total,
+                        'provinces' => $provinces,
                         'userAddress' => $userAddress,
                         'shippings' => $shippingCosts
                     ]);
@@ -137,7 +144,8 @@ class CartController extends Controller
                 }
             }else{
                 return Inertia::render('User/CartList', [
-                    'userAddress' => $userAddress
+                    'userAddress' => $userAddress,
+                    'provinces' => $provinces,
                 ]);
             }
         }else{
@@ -152,6 +160,38 @@ class CartController extends Controller
             }
         }
 
+    }
+
+    public function addAddress(Request $request)
+    {
+
+        $address = new UserAddress;
+        $address->type = $request->type;
+        $address->address1 = $request->address1;
+        $address->address2 = $request->address2;
+        $address->isMain = $request->isMain;
+        $address->postcode = $request->postcode;
+        $address->country_code = $request->country_code;
+        $address->city_id = $request->city_id;
+        $address->prov_id = $request->prov_id;
+        $address->user_id = $request->user()->id;
+
+        $response = Http::withHeaders([
+            'key' => '067f3c3070f9ba9652054f7f1eb0e182',
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json',
+        ])->get('https://api.rajaongkir.com/starter/city?id='.$request->city_id.'&province='.$request->prov_id);
+
+        $data = $response['rajaongkir']['results'];
+
+        $address->province = $data['province'];
+        $address->city = $data['city_name'];
+
+        if ($address->save()){
+            return redirect()->route('cart.show')->with('success', 'Address created successfully.');
+        }else{
+            return redirect()->back()->with('errors', 'Failed create address');
+        }
     }
 
     /**

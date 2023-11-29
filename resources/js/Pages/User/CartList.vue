@@ -1,15 +1,17 @@
 <script setup>
 import App from "@/Layouts/App.vue";
-import {DeleteFilled} from "@element-plus/icons-vue";
-import {computed, reactive} from "vue";
-import {Head, router, usePage} from "@inertiajs/vue3";
+import {DeleteFilled, Plus} from "@element-plus/icons-vue";
+import {computed, reactive, ref} from "vue";
+import {Head, router, usePage, Link} from "@inertiajs/vue3";
 import {ElNotification} from "element-plus";
+import Select from "@/Components/Select.vue";
 const carts = computed(() => usePage().props.carts)
 const total = computed(() => usePage().props.total)
+const shippings = computed(() => usePage().props.shippings)
 
 defineProps({
     userAddress:Object,
-    shippings:Object,
+    provinces:Object
 })
 
 
@@ -86,33 +88,7 @@ const deleteProduct = (product) => {
 }
 
 const form = reactive({
-    if(userAddress){
-        const { value } = userAddress;
-        form.address1 = value;
-        form.province = value;
-        form.city = value;
-        form.postcode = value;
-        form.country_code = value;
-        form.type = value;
-        form.shipping = value;
-    },
-    address1: null,
-    province: null,
-    city: null,
-    postcode: null,
-    country_code: null,
-    type: null,
     shipping: null,
-
-})
-
-const formFilled = computed(()=>{
-    return (form.address1 !== null &&
-        form.state !== null &&
-        form.city !== null &&
-        form.postcode !== null &&
-        form.country_code !== null &&
-        form.type !== null )
 })
 
 //confirm order
@@ -124,9 +100,69 @@ function submit() {
             carts: usePage().props.cart.data.items,
             products: usePage().props.cart.data.products,
             total: usePage().props.cart.data.total,
-            address: form
+            items: form
         }
     })
+}
+
+const isAddItem = ref(false);
+const dialogVisible = ref(false);
+
+//form data address
+const id = ref('');
+const type = ref('');
+const address1 = ref('');
+const address2 = ref('');
+const isMain = ref(false);
+const postcode = ref('');
+const country_code = ref('');
+const city_id = ref('');
+const prov_id = ref(1);
+const cities = ref([]);
+
+const getCityByProvince = async () => {
+    try {
+        const response = await fetch(`/address/city/${prov_id.value}`);
+        const data = await response.json();
+        cities.value = data.data;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+const openAddModal = () => {
+    isAddItem.value = true;
+    dialogVisible.value = true;
+
+    prov_id.value = null;
+}
+
+const AddAddress = async ()=>{
+
+    const formData = new FormData();
+    formData.append('address1', address1.value);
+    formData.append('address2', address2.value);
+    formData.append('prov_id', prov_id.value);
+    formData.append('city_id', city_id.value);
+    formData.append('postcode', postcode.value);
+    formData.append('country_code', country_code.value);
+    formData.append('isMain', isMain.value);
+    formData.append('type', type.value);
+
+    try {
+        await router.post('address', formData, {
+            onSuccess: page => {
+                ElNotification({
+                    title: 'Success',
+                    message: page.props.flash.success,
+                    type: 'success',
+                })
+                dialogVisible.value = false;
+            },
+        })
+    } catch (err) {
+        console.log(err)
+    }
 }
 
 </script>
@@ -134,8 +170,8 @@ function submit() {
 <template>
     <App>
         <Head title="Cart" />
-        <section class="text-gray-600 body-font relative">
-            <div class="container px-5 py-24 mx-auto flex sm:flex-nowrap flex-wrap gap-4">
+        <section class="text-gray-600 body-font pb-10">
+            <div class="container px-5 pt-12 mx-auto h-screen flex sm:flex-nowrap flex-wrap gap-4">
                 <div class="relative overflow-x-auto sm:rounded-lg lg:w-2/3 md:w-1/2 lg:px-6">
                     <h1 class="text-xl font-semibold mb-4 dark:text-white">Your Cart</h1>
                     <table class="w-full text-sm text-left overflow-y-scroll max-h-[800px] text-gray-500 dark:text-gray-400 rounded-lg">
@@ -211,58 +247,117 @@ function submit() {
                     </table>
                 </div>
 
+                <!-- Start modal -->
+                <el-dialog
+                    v-model="dialogVisible"
+                    class="text-gray-800 dark:bg-gray-800 dark:text-gray-200"
+                    width="60%"
+                >
+                    <h3 class="text-lg text-gray-800 dark:text-white mb-6">Add Address</h3>
+                    <form @submit.prevent="AddAddress()">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <div class="mb-6">
+                                    <label for="form_address1" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Address 1</label>
+                                    <input type="text" v-model="address1" name="form_address1" id="form_address1" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Address 1" required>
+                                </div>
+                                <div class="mb-6">
+                                    <label for="form_address2" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Address 2</label>
+                                    <input type="text" v-model="address2" name="form_address2" id="form_address2" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Address 2">
+                                </div>
+                                <div class="mb-6">
+                                    <label for="form_province" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Province</label>
+                                    <select id="form_province" name="form_province" @change="getCityByProvince" v-model="prov_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                        <option v-for="(prov, index) in provinces" :key="index" :value="prov.province_id" >{{prov.province}}</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-6">
+                                    <label for="form_city" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">City</label>
+                                    <select id="form_city" name="form_city" v-model="city_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                        <option v-for="(city, index) in cities" :key="index" :value="city.city_id" >{{city.city_name}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="mb-6">
+                                    <label for="form_countrycode" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Country Code</label>
+                                    <input type="text" v-model="country_code" name="form_countrycode" id="form_countrycode" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Country Code" required>
+                                </div>
+
+                                <div class="mb-6">
+                                    <label for="form_postcode" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Postcode</label>
+                                    <input type="text" v-model="postcode" name="form_postcode" id="form_postcode" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Postcode" required>
+                                </div>
+
+                                <div class="mb-6">
+                                    <label for="form_active" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Type</label>
+                                    <select id="form_active" name="form_active" v-model="type" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                        <option value=home selected>Home</option>
+                                        <option value="office">Office</option>
+                                        <option value="school">School</option>
+                                    </select>
+                                </div>
+                                <div class="mb-6">
+                                    <label for="form_active" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
+                                    <select id="form_active" name="form_active" v-model="isMain" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                        <option value="1" selected>Active</option>
+                                        <option value="0">Non Active</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="flex w-full justify-center items-center gap-4">
+                            <button type="button" @click="dialogVisible = false" class="text-white bg-black hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-900 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-dark dark:hover:bg-slate-900 dark:focus:ring-black">Cancel</button>
+                            <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
+                        </div>
+                    </form>
+                </el-dialog>
+                <!-- End modal -->
+
                 <div class="lg:w-1/3 md:w-1/2 bg-white px-6 flex flex-col md:ml-auto w-full h-fit md:py-8 mt-8 md:mt-0 dark:bg-gray-800 rounded-lg">
                     <h2 class="text-gray-900 text-2xl mb-1 font-bold dark:text-white">Summary</h2>
                     <p v-if="total" class="leading-relaxed font-semibold mb-5 text-gray-600 dark:text-gray-200">Total : Rp. {{ Number(total).toLocaleString() }}</p>
                     <p v-else class="leading-relaxed font-semibold mb-5 text-gray-600 dark:text-gray-200">Total : Rp. 0</p>
                     <h2 class="text-gray-900 text-xl mb-1 font-semibold dark:text-white">Shipping Address</h2>
                     <p v-if="userAddress" class="leading-relaxed mb-5 text-gray-600 dark:text-gray-200">{{userAddress.address1}}, {{userAddress.city}}, {{userAddress.postcode}}</p>
-                    <p class="leading-relaxed mb-5 text-gray-600 dark:text-gray-200">or you can add below</p>
+                    <button v-else type="button" @click="openAddModal" class="flex items-center justify-center text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
+                        <el-icon><Plus /></el-icon>
+                        <span class="ml-2"> Add Address</span>
+                    </button>
                     <form @submit.prevent="submit">
-                        <p class="mt-2 text-lg font-medium">Shipping Methods</p>
-                        <div class="my-5 grid gap-6">
-                            <div v-for="(ship, index) in shippings" class="relative">
-                                <input class="peer hidden" key="index" v-model="form.shipping" id="radio_1" type="radio" name="radio" checked />
-                                <span class="peer-checked:border-gray-700 absolute right-4 top-1/2 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white"></span>
-                                <label class="peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-gray-50 flex cursor-pointer select-none rounded-lg border border-gray-300 p-4" for="radio_1">
-                                    <img class="w-14 object-contain" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/330px-No-Image-Placeholder.svg.png" alt="" />
-                                    <div class="ml-5">
-                                        <span class="mt-2 font-semibold capitalize">{{ ship.name }} ({{ship.type}})</span>
-                                        <p class="text-slate-500 text-sm leading-6">Rp. {{Number(ship.price).toLocaleString() }}</p>
-                                    </div>
-                                </label>
+                        <div v-if="shippings">
+                            <p class="mt-2 text-lg font-medium">Shipping Methods</p>
+                            <div class="my-5 grid gap-6">
+                                <div v-for="(ship, index) in shippings" :key="index" class="relative">
+                                    <input
+                                        class="peer hidden"
+                                        v-model="form.shipping"
+                                        :value="`${ship.name}-${ship.type}-${ship.price}`"
+                                        :id="'radio_' + index"
+                                        type="radio"
+                                        name="radio"
+                                        :checked="form.shipping === `${ship.name}-${ship.type}-${ship.price}`"
+                                    />
+                                    <span class="peer-checked:border-gray-700 absolute right-4 top-1/2 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white"></span>
+                                    <label
+                                        class="peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-gray-50 flex cursor-pointer select-none rounded-lg border border-gray-300 p-4"
+                                        :for="'radio_' + index"
+                                    >
+                                        <img class="w-14 object-contain" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/330px-No-Image-Placeholder.svg.png" alt="" />
+                                        <div class="ml-5">
+                                            <span class="mt-2 font-semibold capitalize">{{ ship.name }} ({{ ship.type }})</span>
+                                            <p class="text-slate-500 text-sm leading-6">Rp. {{ Number(ship.price).toLocaleString() }}</p>
+                                        </div>
+                                    </label>
+                                </div>
                             </div>
                         </div>
-                        <p class="mt-8 text-lg font-medium">Detail Address</p>
-                        <div class="relative mb-4">
-                            <label for="address1" class="leading-7 text-sm text-gray-600 dark:text-gray-100">Address 1</label>
-                            <input type="text" id="address1" name="address1" v-model="form.address1" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
-                        </div>
-                        <div class="relative mb-4">
-                            <label for="province" class="leading-7 text-sm text-gray-600">Province</label>
-                            <input type="text" id="province" name="province" v-model="form.province"
-                                   class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
-                        </div>
-                        <div class="relative mb-4">
-                            <label for="city" class="leading-7 text-sm text-gray-600 dark:text-gray-100">City</label>
-                            <input type="text" id="city" name="city" v-model="form.city" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
-                        </div>
-                        <div class="relative mb-4">
-                            <label for="postcode" class="leading-7 text-sm text-gray-600 dark:text-gray-100">Postcode</label>
-                            <input type="text" id="postcode" name="postcode" v-model="form.postcode" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
-                        </div>
-                        <div class="relative mb-4">
-                            <label for="country_code" class="leading-7 text-sm text-gray-600 dark:text-gray-100">Coutry Code</label>
-                            <input type="text" id="country_code" name="country_code" v-model="form.country_code" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
-                        </div>
-                        <div class="relative mb-4">
-                            <label for="type" class="leading-7 text-sm text-gray-600 dark:text-gray-100">Address Type</label>
-                            <input type="text" id="type" name="type" v-model="form.type" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
-                        </div>
-                        <button v-if="formFilled" type="submit" class="text-white bg-blue-600 border-0 py-2 px-6 focus:outline-none w-full hover:bg-blue-700 rounded-lg text-lg">Checkout</button>
-                        <button v-else type="submit" class="text-white w-full bg-blue-600 border-0 py-2 px-6 focus:outline-none hover:bg-blue-700 rounded-lg text-lg">Add Address</button>
+                        <button v-if="carts && userAddress" type="submit" class="text-white w-full bg-blue-600 border-0 py-1 px-6 focus:outline-none hover:bg-blue-700 rounded-lg text-lg">Checkout</button>
                     </form>
-                        <p class="text-xs text-gray-500 mt-3 dark:text-gray-100">Continue shopping</p>
+                        <Link :href="route('product.index')" class="text-xs text-gray-500 mt-3 dark:text-gray-100">Continue shopping</Link>
                 </div>
                 </div>
         </section>
