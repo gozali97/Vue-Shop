@@ -18,7 +18,7 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        $orders = Order::with('items', 'items.product')->latest()->paginate(10);
+        $orders = Order::with('items', 'items.product')->latest()->paginate(5);
 
         return Inertia::render('User/Dashboard', [
             'orders' => $orders
@@ -104,9 +104,10 @@ class DashboardController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function invoice($id)
     {
-        //
+        $order = Order::with('items', 'items.product')->where('id',$id)->first();
+        dd($order);
     }
 
     /**

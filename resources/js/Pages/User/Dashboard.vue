@@ -3,7 +3,8 @@ import {Head, usePage, Link, router} from '@inertiajs/vue3';
 import App from "@/Layouts/App.vue";
 import Banner from "@/Pages/User/components/Banner.vue";
 import {computed} from "vue";
-import {ElNotification} from "element-plus";
+import Paginate from "@/Components/Paginate.vue";
+import {DArrowLeft, DArrowRight} from "@element-plus/icons-vue";
 
 const orders = computed(() => usePage().props.orders)
 
@@ -13,17 +14,8 @@ function payOrder(order) {
         data: {
             order: order
         }
-        // ,
-        // onSuccess: page => {
-        // ElNotification({
-        //     title: 'Success',
-        //     message: page.props.flash.success,
-        //     type: 'success',
-        // })
-    // },
     })
 }
-
 </script>
 
 <template>
@@ -91,12 +83,28 @@ function payOrder(order) {
                             </td>
                             <td class="whitespace-no-wrap hidden py-4 text-sm font-normal text-gray-500 sm:px-6 lg:table-cell">
                                 <button @click="payOrder(order)" v-if="order.status == 'Unpaid'" class="inline-flex items-center rounded-lg py-1.5 px-3 text-xs text-white bg-emerald-600 hover:bg-emerald-700">Bayar</button>
-                                <Link  v-else class="inline-flex items-center rounded-lg py-1.5 px-3 text-xs text-white bg-rose-600 hover:bg-rose-700">Invoice</Link>
+                                <Link :href="route('invoice', order.id)"  v-else class="inline-flex items-center rounded-lg py-1.5 px-3 text-xs text-white bg-rose-600 hover:bg-rose-700">Invoice</Link>
                             </td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
+                <div class="mx-auto mt-4 flex max-w-md justify-center space-x-2 rounded-lg bg-gray-50 py-2">
+                    <ul class="flex">
+                        <li v-for="(link, index) in orders.links" class="flex items-center space-x-1 font-medium hover:text-blue-600">
+                            <Link :href="link.url" v-if="link.label.includes('Previous')" class="px-2 text-lg font-medium sm:px-3 hover:text-blue-600">
+                                back
+                            </Link>
+                            <Link :href="link.url" v-else-if="link.label.includes('Next')" class="px-2 text-lg font-medium sm:px-3 hover:text-blue-600">
+                                <span>next</span>
+                            </Link>
+                            <Link v-else :href="link.url" class="px-2 text-lg font-medium sm:px-3 hover:text-blue-600">
+                                {{ link.label }}
+                            </Link>
+                        </li>
+                    </ul>
+                </div>
+
             </div>
 
         </div>
