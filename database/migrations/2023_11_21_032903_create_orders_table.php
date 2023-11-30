@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->string('order_id');
-            $table->decimal('total_price', 20, 2);
+            $table->decimal('gross_amount', 20, 2);
             $table->enum('status', ['Unpaid', 'Paid']);
             $table->dateTime('paid_at')->nullable();
             $table->string('courir');

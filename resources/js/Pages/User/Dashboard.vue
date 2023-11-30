@@ -22,7 +22,7 @@ function payOrder(order) {
     <Head title="Dashboard" />
     <App>
         <Banner/>
-        <div class="flex w-screen py-10 h-full ">
+        <div class="block py-10 h-auto">
             <div class="mx-auto mt-2 max-w-screen-lg px-2">
                 <div class="sm:flex sm:items-center sm:justify-between flex-col sm:flex-row">
                     <p class="flex-1 text-base font-bold text-gray-900">Latest Order</p>
@@ -75,7 +75,7 @@ function payOrder(order) {
                                 </div>
                             </td>
                             <td class="whitespace-no-wrap py-4 px-6 text-right text-sm text-gray-600 lg:text-left">
-                                Rp. {{Number(order.total_price).toLocaleString() }}
+                                Rp. {{Number(order.gross_amount).toLocaleString() }}
                             </td>
                             <td class="whitespace-no-wrap hidden py-4 text-sm font-normal text-gray-500 sm:px-6 lg:table-cell">
                                 <div class="inline-flex items-center rounded-full py-1.5 px-3 text-xs text-white" :class="order.status == 'Unpaid' ? 'bg-yellow-500' : 'bg-blue-500'">

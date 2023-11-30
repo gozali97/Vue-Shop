@@ -54,7 +54,7 @@ class DashboardController extends Controller
         $params = array(
             'transaction_details' => array(
                 'order_id' => $order['order_id'],
-                'gross_amount' => intval($order['total_price']),
+                'gross_amount' => intval($order['gross_amount']),
             ),
             'customer_details' => array(
                 'first_name' => 'Mr',
@@ -107,7 +107,12 @@ class DashboardController extends Controller
     public function invoice($id)
     {
         $order = Order::with('items', 'items.product')->where('id',$id)->first();
-        dd($order);
+        $user = UserAddress::with('user')->where('id', $order->user_address_id)->first();
+//dd($order);
+        return Inertia::render('User/Invoice',[
+            'order' => $order,
+            'user' => $user
+        ]);
     }
 
     /**

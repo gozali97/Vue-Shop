@@ -44,15 +44,14 @@ class CheckoutController extends Controller
         $total = $request->total;
         $userAddress = UserAddress::where('user_id', $user->id)->where('isMain', 1)->first();
 
-        $total_amount = $total + $courir_price;
-        $order_id = 'order-'.now()->format('Y').$request->user()->id.'-'.now()->format('H-m-s').rand(1, 10);
+        $order_id = 'order-'.now()->format('Y').$request->user()->id.now()->format('Hm-s').rand(1, 10);
 
         $cartItems = Cart::with('product')->where(['user_id' => $user->id])->whereNull('paid_at')->get();
 
         $order = new Order;
         $order->order_id = $order_id;
         $order->status = 'Unpaid';
-        $order->total_price = $total_amount;
+        $order->gross_amount = $total;
         $order->courir = $courir;
         $order->courir_type = $courir_type;
         $order->courir_price = $courir_price;
@@ -72,7 +71,7 @@ class CheckoutController extends Controller
             Cache::forget('carts_global_count');
             $paymentData = [
                 'order_id' => $order->id,
-                'amount' => $total_amount,
+                'amount' => $total,
                 'status' => 'pending',
                 'type' => 'online',
                 'created_by' => $user->id,

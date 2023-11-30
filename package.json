@@ -28,11 +28,13 @@
         "@splidejs/vue-splide": "^0.6.12",
         "@vue-hero-icons/outline": "^1.7.2",
         "@vueuse/core": "^10.6.1",
+        "@vueuse/shared": "^10.6.1",
         "aos": "^2.3.4",
         "element-plus": "^2.4.2",
         "flag-icons": "^7.0.2",
         "flowbite": "^2.2.0",
         "flowbite-vue": "^0.1.0",
+        "moment": "^2.29.4",
         "numeral": "^2.0.6",
         "vue-sweetalert2": "^5.0.5"
     }

@@ -1,72 +1,85 @@
+<script setup>
+import App from "@/Layouts/App.vue";
+import moment from 'moment';
+import {computed} from "vue";
+import {usePage} from "@inertiajs/vue3";
+import Link from "@/Components/Link.vue";
+
+const orders = computed(() => usePage().props.order)
+defineProps({
+    order:Object,
+    user:Object,
+})
+
+</script>
+
 <template>
     <App>
-        <div class="bg-white rounded-lg shadow-lg px-8 py-10 max-w-xl mx-auto">
-            <div class="flex items-center justify-between mb-8">
-                <div class="flex items-center">
-                    <img class="h-8 w-8 mr-2" src="https://tailwindflex.com/public/images/logos/favicon-32x32.png"
-                         alt="Logo" />
-                    <div class="text-gray-700 font-semibold text-lg">Your Company Name</div>
-                </div>
-                <div class="text-gray-700">
-                    <div class="font-bold text-xl mb-2">INVOICE</div>
-                    <div class="text-sm">Date: 01/05/2023</div>
-                    <div class="text-sm">Invoice #: INV12345</div>
-                </div>
-            </div>
-            <div class="border-b-2 border-gray-300 pb-8 mb-8">
-                <h2 class="text-2xl font-bold mb-4">Bill To:</h2>
-                <div class="text-gray-700 mb-2">John Doe</div>
-                <div class="text-gray-700 mb-2">123 Main St.</div>
-                <div class="text-gray-700 mb-2">Anytown, USA 12345</div>
-                <div class="text-gray-700">johndoe@example.com</div>
-            </div>
-            <table class="w-full text-left mb-8">
-                <thead>
-                <tr>
-                    <th class="text-gray-700 font-bold uppercase py-2">Description</th>
-                    <th class="text-gray-700 font-bold uppercase py-2">Quantity</th>
-                    <th class="text-gray-700 font-bold uppercase py-2">Price</th>
-                    <th class="text-gray-700 font-bold uppercase py-2">Total</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td class="py-4 text-gray-700">Product 1</td>
-                    <td class="py-4 text-gray-700">1</td>
-                    <td class="py-4 text-gray-700">$100.00</td>
-                    <td class="py-4 text-gray-700">$100.00</td>
-                </tr>
-                <tr>
-                    <td class="py-4 text-gray-700">Product 2</td>
-                    <td class="py-4 text-gray-700">2</td>
-                    <td class="py-4 text-gray-700">$50.00</td>
-                    <td class="py-4 text-gray-700">$100.00</td>
-                </tr>
-                <tr>
-                    <td class="py-4 text-gray-700">Product 3</td>
-                    <td class="py-4 text-gray-700">3</td>
-                    <td class="py-4 text-gray-700">$75.00</td>
-                    <td class="py-4 text-gray-700">$225.00</td>
-                </tr>
-                </tbody>
-            </table>
-            <div class="flex justify-end mb-8">
-                <div class="text-gray-700 mr-2">Subtotal:</div>
-                <div class="text-gray-700">$425.00</div>
-            </div>
-            <div class="text-right mb-8">
-                <div class="text-gray-700 mr-2">Tax:</div>
-                <div class="text-gray-700">$25.50</div>
 
-            </div>
-            <div class="flex justify-end mb-8">
-                <div class="text-gray-700 mr-2">Total:</div>
-                <div class="text-gray-700 font-bold text-xl">$450.50</div>
-            </div>
-            <div class="border-t-2 border-gray-300 pt-8 mb-8">
-                <div class="text-gray-700 mb-2">Payment is due within 30 days. Late payments are subject to fees.</div>
-                <div class="text-gray-700 mb-2">Please make checks payable to Your Company Name and mail to:</div>
-                <div class="text-gray-700">123 Main St., Anytown, USA 12345</div>
+        <div class="py-10">
+            <div class="bg-white rounded-lg shadow-lg px-8 py-10 max-w-xl mx-auto dark:bg-gray-800">
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex items-center">
+                        <img class="h-8 w-8 mr-2" :src="`/images/logo.png`"
+                             alt="Logo" />
+                        <div class="text-gray-700 font-semibold text-xl dark:text-gray-100">Vue-Shop</div>
+                    </div>
+                    <div class="text-gray-700 dark:text-gray-200">
+                        <div class="font-bold text-xl mb-2 dark:text-gray-100">INVOICE</div>
+                        <div class="text-sm dark:text-gray-200">Date: {{ moment(String(order.paid_at)).format('MM/DD/YYYY hh:mm') }}</div>
+                        <div class="text-sm dark:text-gray-200">No: {{ order.order_id }}</div>
+                    </div>
+                </div>
+                <div class="border-b-2 border-gray-300 pb-8 mb-8">
+                    <h2 class="text-2xl font-bold mb-4">Bill To:</h2>
+                    <div class="text-gray-700 mb-2 dark:text-gray-200">{{ user.user.name }}</div>
+                    <div class="text-gray-700 mb-2 dark:text-gray-200">{{ user.address1 }}</div>
+                    <div class="text-gray-700 mb-2 dark:text-gray-200">{{ user.city }}, {{ user.country_code }} {{ user.postcode }}</div>
+                    <div class="text-gray-700 dark:text-gray-200">{{ user.user.email }}</div>
+                </div>
+                <table class="w-full text-left mb-8">
+                    <thead>
+                    <tr>
+                        <th class="text-gray-700 font-bold uppercase py-2 dark:text-gray-200">Description</th>
+                        <th class="text-gray-700 font-bold uppercase py-2 dark:text-gray-200">Quantity</th>
+                        <th class="text-gray-700 font-bold uppercase py-2 dark:text-gray-200">Price</th>
+                        <th class="text-gray-700 font-bold uppercase py-2 dark:text-gray-200">Total</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="(item, i) in order.items">
+                        <td class="py-4 text-gray-700 dark:text-gray-200">
+                            <div v-for="prod in item.product">
+                                    {{ prod.title }}
+                            </div>
+                        </td>
+                        <td class="py-4 text-gray-700 dark:text-gray-200">{{item.quantity}}</td>
+                        <td class="py-4 text-gray-700 dark:text-gray-200">Rp. {{ Number(item.unit_price).toLocaleString() }}</td>
+                        <td class="py-4 text-gray-700 dark:text-gray-200">RP. {{ Number(item.quantity * item.unit_price).toLocaleString() }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="flex justify-end mb-2">
+                    <div class="text-gray-700 mr-2 dark:text-gray-200">Subtotal:</div>
+                    <div class="text-gray-700 dark:text-gray-200">Rp. {{ Number(order.gross_amount).toLocaleString() }}</div>
+                </div>
+                <div class="flex justify-end mb-8">
+                    <div class="text-gray-700 mr-2 dark:text-gray-200">Shipping:</div>
+                    <div class="text-gray-700 dark:text-gray-200">Rp. {{ Number(order.courir_price).toLocaleString() }}</div>
+
+                </div>
+                <div class="flex justify-end mb-8">
+                    <div class="text-gray-700 mr-2">Total:</div>
+                    <div class="text-gray-700 font-bold text-xl">Rp. {{ Number(order.gross_amount += order.courir_price).toLocaleString() }}</div>
+                </div>
+                <div class="border-t-2 border-gray-300 pt-8 mb-8">
+                    <div class="text-gray-700 mb-2">Payment is due within 30 days. Late payments are subject to fees.</div>
+                    <div class="text-gray-700 mb-2">Please make checks payable to Your Company Name and mail to:</div>
+                    <div class="text-gray-700">123 Main St., Anytown, USA 12345</div>
+                </div>
+                <div class="flex justify-center">
+                    <Link :href="route('dashboard')" class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Back</Link>
+                </div>
             </div>
         </div>
     </App>
