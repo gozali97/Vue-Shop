@@ -20,9 +20,10 @@ use Inertia\Inertia;
 Route::controller(UserController::class)->group(function () {
     Route::get('/',  'index')->name('home');
 });
-
+Route::post('api/notification/handling', [DashboardController::class, 'response'])->name('response');
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::post('/pay', [DashboardController::class, 'store'])->name('pay');
 
     Route::controller(\App\Http\Controllers\User\ProductController::class)->group(function () {
         Route::get('/product',  'index')->name('product.index');

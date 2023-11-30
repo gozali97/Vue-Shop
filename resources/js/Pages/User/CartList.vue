@@ -102,7 +102,14 @@ function submit() {
             products: usePage().props.cart.data.products,
             total: usePage().props.cart.data.total,
             items: form
-        }
+        },
+        onSuccess: page => {
+            ElNotification({
+                title: 'Success',
+                message: page.props.flash.success,
+                type: 'success',
+            })
+        },
     })
 }
 

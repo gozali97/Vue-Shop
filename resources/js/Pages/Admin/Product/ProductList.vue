@@ -298,10 +298,10 @@
         </el-dialog>
         <!-- End modal -->
 
-        <div class="max-w-screen-xl px-2">
+        <div class="max-w-screen-xl px-2 bg-gray-50 dark:bg-gray-900">
             <!-- Start coding here -->
             <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
-                <div class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
+                <div class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4 bg-gray-50 dark:bg-gray-900">
                     <!-- Start from search -->
                     <div class="w-full md:w-1/2">
                         <label for="simple-search" class="sr-only">Search</label>

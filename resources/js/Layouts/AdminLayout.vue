@@ -17,7 +17,7 @@ onMounted(() => {
 
         <Sidebar/>
 
-        <main class="p-4 md:ml-64 h-screen pt-20">
+        <main class="p-4 md:ml-64 h-screen pt-20 bg-gray-50 dark:bg-gray-900">
             <slot />
         </main>
     </div>

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('order_id');
             $table->decimal('total_price', 20, 2);
-            $table->string('status', 45);
+            $table->enum('status', ['Unpaid', 'Paid']);
             $table->dateTime('paid_at')->nullable();
             $table->string('courir');
             $table->string('courir_type');
