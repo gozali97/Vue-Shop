@@ -1,15 +1,17 @@
 <script setup>
 import App from "@/Layouts/App.vue";
 import moment from 'moment';
-import {computed} from "vue";
-import {usePage} from "@inertiajs/vue3";
 import Link from "@/Components/Link.vue";
+import {usePage} from "@inertiajs/vue3";
 
-const orders = computed(() => usePage().props.order)
 defineProps({
-    order:Object,
     user:Object,
+    total_price:Number,
+    sub_total:Number,
 })
+
+const order = usePage().props.order;
+const data = usePage().props.data;
 
 </script>
 
@@ -47,11 +49,9 @@ defineProps({
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="(item, i) in order.items">
+                    <tr v-for="(item, i) in data">
                         <td class="py-4 text-gray-700 dark:text-gray-200">
-                            <div v-for="prod in item.product">
-                                    {{ prod.title }}
-                            </div>
+                            {{ item.title }}
                         </td>
                         <td class="py-4 text-gray-700 dark:text-gray-200">{{item.quantity}}</td>
                         <td class="py-4 text-gray-700 dark:text-gray-200">Rp. {{ Number(item.unit_price).toLocaleString() }}</td>
@@ -61,7 +61,7 @@ defineProps({
                 </table>
                 <div class="flex justify-end mb-2">
                     <div class="text-gray-700 mr-2 dark:text-gray-200">Subtotal:</div>
-                    <div class="text-gray-700 dark:text-gray-200">Rp. {{ Number(order.gross_amount).toLocaleString() }}</div>
+                    <div class="text-gray-700 dark:text-gray-200">Rp. {{ Number(sub_total).toLocaleString() }}</div>
                 </div>
                 <div class="flex justify-end mb-8">
                     <div class="text-gray-700 mr-2 dark:text-gray-200">Shipping:</div>
@@ -70,7 +70,7 @@ defineProps({
                 </div>
                 <div class="flex justify-end mb-8">
                     <div class="text-gray-700 mr-2">Total:</div>
-                    <div class="text-gray-700 font-bold text-xl">Rp. {{ Number(order.gross_amount += order.courir_price).toLocaleString() }}</div>
+                    <div class="text-gray-700 font-bold text-xl">Rp. {{ Number(total_price).toLocaleString() }}</div>
                 </div>
                 <div class="border-t-2 border-gray-300 pt-8 mb-8">
                     <div class="text-gray-700 mb-2">Payment is due within 30 days. Late payments are subject to fees.</div>

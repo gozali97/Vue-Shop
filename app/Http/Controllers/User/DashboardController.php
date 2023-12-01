@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\OrderDetailResource;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\Product;
@@ -108,9 +109,32 @@ class DashboardController extends Controller
     {
         $order = Order::with('items', 'items.product')->where('id',$id)->first();
         $user = UserAddress::with('user')->where('id', $order->user_address_id)->first();
-//dd($order);
+
+        $data = [];
+        foreach ($order->items as $item){
+                foreach ($item->product as $prod){
+                    $data[] = [
+                        'order_id' => $order->order_id,
+                        'title' => $prod->title,
+                        'gross_amount' => intval($order->gross_amount),
+                        'quantity' => $item->quantity,
+                        'unit_price' => $item->unit_price,
+                        'status' => $order->status,
+                        'paid_at' => $order->paid_at,
+                        'courir' => $order->courir,
+                        'courir_type' => $order->courir_type,
+                        'courir_price' => $order->courir_price,
+                    ];
+                }
+         }
+        $sub_total = intval($order->gross_amount);
+        $total_price = $order->gross_amount + $order->courir_price;
+
         return Inertia::render('User/Invoice',[
             'order' => $order,
+            'sub_total' => $sub_total,
+            'total_price' => $total_price,
+            'data' => $data,
             'user' => $user
         ]);
     }
