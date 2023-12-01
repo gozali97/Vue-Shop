@@ -82,7 +82,7 @@ function payOrder(order) {
                                     {{ order.status }}</div>
                             </td>
                             <td class="whitespace-no-wrap hidden py-4 text-sm font-normal text-gray-500 sm:px-6 lg:table-cell">
-                                <button @click="payOrder(order)" v-if="order.status == 'Unpaid'" class="inline-flex items-center rounded-lg py-1.5 px-3 text-xs text-white bg-emerald-600 hover:bg-emerald-700">Bayar</button>
+                                <button @click="payOrder(order)" v-if="order.status == 'Unpaid'" class="inline-flex items-center rounded-lg py-1.5 px-3 text-xs text-white bg-emerald-600 hover:bg-emerald-700">Payment</button>
                                 <Link :href="route('invoice', order.id)"  v-else class="inline-flex items-center rounded-lg py-1.5 px-3 text-xs text-white bg-rose-600 hover:bg-rose-700">Invoice</Link>
                             </td>
                         </tr>
@@ -91,14 +91,14 @@ function payOrder(order) {
                 </div>
                 <div class="mx-auto mt-4 flex max-w-md justify-center space-x-2 rounded-lg bg-gray-50 py-2">
                     <ul class="flex">
-                        <li v-for="(link, index) in orders.links" class="flex items-center space-x-1 font-medium hover:text-blue-600">
-                            <Link :href="link.url" v-if="link.label.includes('Previous')" class="px-2 text-lg font-medium sm:px-3 hover:text-blue-600">
-                                back
+                        <li v-for="(link, index) in orders.links" class="flex items-center mx-2 space-x-1 font-medium ">
+                            <Link :href="link.url" v-if="link.label.includes('Previous')" class="flex p-2.5 text-gray-800 rounded-full items-center text-lg font-medium hover:bg-gray-200 hover:text-gray-900">
+                                <el-icon size="15"><DArrowLeft /></el-icon>
                             </Link>
-                            <Link :href="link.url" v-else-if="link.label.includes('Next')" class="px-2 text-lg font-medium sm:px-3 hover:text-blue-600">
-                                <span>next</span>
+                            <Link :href="link.url" v-else-if="link.label.includes('Next')" class="flex p-2.5 text-gray-800 rounded-full items-center text-lg font-medium hover:bg-gray-200 hover:text-gray-900">
+                                <el-icon size="15"><DArrowRight /></el-icon>
                             </Link>
-                            <Link v-else :href="link.url" class="px-2 text-lg font-medium sm:px-3 hover:text-blue-600">
+                            <Link v-else :href="link.url" class="flex py-0.5 text-gray-800 rounded-full items-center text-lg font-medium sm:px-3 hover:text-gray-100" :class="link.active ? 'bg-blue-500 hover:bg-blue-600':'bg-gray-200 hover:bg-gray-400'">
                                 {{ link.label }}
                             </Link>
                         </li>

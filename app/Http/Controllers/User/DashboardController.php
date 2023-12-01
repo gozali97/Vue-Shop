@@ -19,7 +19,7 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        $orders = Order::with('items', 'items.product')->latest()->paginate(5);
+        $orders = Order::with('items', 'items.product')->latest()->paginate(10);
 
         return Inertia::render('User/Dashboard', [
             'orders' => $orders
@@ -64,10 +64,19 @@ class DashboardController extends Controller
                 'phone' => '08111222333',
             ),
         );
+//        dd($order);
 
+        $total_product = 0;
+        $total_price = $order['gross_amount'] + $order['courir_price'];
+        foreach ($order['items'] as $item){
+            $total_product += $item['quantity'];
+        }
         $snapToken = \Midtrans\Snap::getSnapToken($params);
+
         return Inertia::render('User/Payment',[
             'order' => $order,
+            'total_product' => $total_product,
+            'total_price' => $total_price,
             'token' => $snapToken,
         ]);
     }

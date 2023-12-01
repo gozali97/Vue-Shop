@@ -6,6 +6,8 @@ const auth = usePage().props.auth;
 defineProps({
     order:Object,
     token:String,
+    total_product:Number,
+    total_price:Number,
 })
 
 const handlePayment = (token) => {
@@ -62,23 +64,57 @@ const handlePayment = (token) => {
                 <div class="mb-10">
                     <h1 class="text-center font-bold text-xl uppercase">Secure payment</h1>
                 </div>
-                <div class="mb-3">
-                    <label class="font-bold text-sm mb-2 ml-1">Name</label>
-                    <div>
-                        <input class="w-full px-3 py-2 mb-1 border-2 border-gray-200 rounded-md focus:outline-none focus:border-indigo-500 transition-colors" placeholder="John Smith" type="text" :value="auth.user.name"/>
-                    </div>
+                <div class="relative overflow-x-auto">
+                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 rounded-s-lg">
+                                Product name
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Qty
+                            </th>
+                            <th scope="col" class="px-6 py-3 rounded-e-lg">
+                                Price
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="(item, i) in order.items" :key="i" class="bg-white dark:bg-gray-800">
+                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                <div v-for="(product, key) in item.product">
+                                    {{product.title}}
+                                </div>
+                            </th>
+                            <td class="px-6 py-4">
+                                {{item.quantity}}
+                            </td>
+                            <td class="px-6 py-4">
+                                Rp. {{ Number(item.unit_price).toLocaleString() }}
+                            </td>
+                        </tr>
+                        </tbody>
+                        <tfoot>
+                        <tr class="font-semibold text-gray-900 dark:text-white">
+                            <th scope="row" class="px-6 py-3 text-base">Total</th>
+                            <td class="px-6 py-3">{{total_product}}</td>
+                            <td class="px-6 py-3">Rp. {{ Number(order.gross_amount).toLocaleString() }}</td>
+                        </tr>
+                        </tfoot>
+                    </table>
                 </div>
-                <div class="mb-3">
-                    <label class="font-bold text-sm mb-2 ml-1">Order ID</label>
-                    <div>
-                        <input class="w-full px-3 py-2 mb-1 border-2 border-gray-200 rounded-md focus:outline-none focus:border-indigo-500 transition-colors" placeholder="John Smith" type="text" :value="order.order_id"/>
-                    </div>
+                <div class="flex justify-end mb-2 mt-4">
+                    <div class="text-gray-700 mr-2 dark:text-gray-200">Subtotal:</div>
+                    <div class="text-gray-700 dark:text-gray-200">Rp. {{ Number(order.gross_amount).toLocaleString() }}</div>
                 </div>
-                <div class="mb-3">
-                    <label class="font-bold text-sm mb-2 ml-1">Total Price</label>
-                    <div>
-                        <input class="w-full px-3 py-2 mb-1 border-2 border-gray-200 rounded-md focus:outline-none focus:border-indigo-500 transition-colors" :value="Number(order.gross_amount).toLocaleString()" type="text"/>
-                    </div>
+                <div class="flex justify-end mb-8">
+                    <div class="text-gray-700 mr-2 dark:text-gray-200">Shipping:</div>
+                    <div class="text-gray-700 dark:text-gray-200">Rp. {{ Number(order.courir_price).toLocaleString() }}</div>
+
+                </div>
+                <div class="flex justify-end mb-8">
+                    <div class="text-gray-700 mr-2">Total:</div>
+                    <div class="text-gray-700 font-bold text-xl">Rp. {{ Number(total_price).toLocaleString() }}</div>
                 </div>
                 <div>
                     <button @click="handlePayment(token)" class="block w-full max-w-xs mx-auto bg-blue-500 hover:bg-blue-700 focus:bg-blue-700 text-white rounded-lg px-3 py-3 font-semibold"><i class="mdi mdi-lock-outline mr-1"></i> PAY NOW</button>

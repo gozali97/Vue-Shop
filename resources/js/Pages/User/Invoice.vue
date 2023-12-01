@@ -2,7 +2,7 @@
 import App from "@/Layouts/App.vue";
 import moment from 'moment';
 import Link from "@/Components/Link.vue";
-import {usePage} from "@inertiajs/vue3";
+import {Head, usePage} from "@inertiajs/vue3";
 
 defineProps({
     user:Object,
@@ -17,7 +17,7 @@ const data = usePage().props.data;
 
 <template>
     <App>
-
+        <Head title="Invoice" />
         <div class="py-10">
             <div class="bg-white rounded-lg shadow-lg px-8 py-10 max-w-xl mx-auto dark:bg-gray-800">
                 <div class="flex items-center justify-between mb-8">
@@ -78,7 +78,7 @@ const data = usePage().props.data;
                     <div class="text-gray-700">123 Main St., Anytown, USA 12345</div>
                 </div>
                 <div class="flex justify-center">
-                    <Link :href="route('dashboard')" class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Back</Link>
+                    <Link :href="route('dashboard')" class="text-white bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Back</Link>
                 </div>
             </div>
         </div>

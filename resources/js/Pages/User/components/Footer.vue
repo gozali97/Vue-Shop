@@ -7,7 +7,7 @@
             <div class="mx-auto grid max-w-screen-xl gap-y-8 gap-x-12 px-4 py-10 md:grid-cols-2 xl:grid-cols-4 xl:px-10">
                 <div class="max-w-sm">
                     <div class="mb-6 flex h-12 items-center space-x-2">
-                        <span class="text-2xl font-bold">Bel<span class="text-blue-600">Air</span>.</span>
+                        <span class="text-2xl font-bold">Vue<span class="text-blue-600">Shop</span>.</span>
                     </div>
                     <div class="text-gray-500">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nobis ad a officia ea expedita!</div>
                 </div>
