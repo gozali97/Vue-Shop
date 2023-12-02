@@ -4,6 +4,7 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
+import {Back} from "@element-plus/icons-vue";
 
 defineProps({
     mustVerifyEmail: {
@@ -25,7 +26,12 @@ const form = useForm({
 <template>
     <section>
         <header>
+            <div class="flex justify-between">
             <h2 class="text-lg font-medium text-gray-900">Profile Information</h2>
+                <Link :href="route('home')" class="inline-flex bg-black hover:bg-gray-700 text-white px-2 py-1 rounded-lg shadow">
+                    <el-icon class="mt-1 mr-1"><Back /></el-icon>
+                    Back</Link>
+            </div>
 
             <p class="mt-1 text-sm text-gray-600">
                 Update your account's profile information and email address.

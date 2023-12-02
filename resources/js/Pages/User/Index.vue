@@ -1,7 +1,7 @@
 <script setup>
 
 import App from "@/Layouts/App.vue";
-import {Head, Link, router, usePage} from "@inertiajs/vue3";
+import {Head, router, usePage} from "@inertiajs/vue3";
 import Feature from "@/Pages/User/components/Feature.vue";
 import Review from "@/Pages/User/components/Review.vue";
 import Contact from "@/Pages/User/components/Contact.vue";
@@ -10,8 +10,7 @@ import CategoryList from "@/Pages/User/components/CategoryList.vue";
 import BrandList from "@/Pages/User/components/BrandList.vue";
 import Header from "@/Pages/User/components/Header.vue";
 import Panel from "@/Pages/User/components/Panel.vue";
-import Product from "@/Pages/User/Product/ProductList.vue";
-import Paginate from "@/Components/Paginate.vue";
+import Link from "@/Components/Link.vue"
 
 defineProps({
     products:Object,
@@ -54,9 +53,8 @@ const addToCart = (product) => {
                             </el-carousel-item>
                         </el-carousel>
 
-                        <div class="px-4 mt-4">
+                        <div class="px-4 mt-4 -ml-1">
                             <Link :href="route('product.view', product.slug)" class="text-gray-900 font-semibold dark:text-gray-100">
-                                <span aria-hidden="true" class="absolute inset-0 " />
                                 {{ product.title }}
                             </Link>
                         </div>

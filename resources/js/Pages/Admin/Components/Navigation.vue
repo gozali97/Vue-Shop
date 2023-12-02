@@ -48,7 +48,7 @@ import { Sunny, Moon } from '@element-plus/icons-vue'
                 </button>
                 <ResponsiveNavLink :href="route('admin.dashboard')" class="flex items-center justify-between mr-4">
                     <img
-                        src="https://images.unsplash.com/photo-1496200186974-4293800e2c20?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bG9nbyUyMGVsZWt0cm9uaWt8ZW58MHx8MHx8fDI%3D"
+                        :src="`/images/logo.png`"
                         class="mr-3 h-8"
                         alt="Logo"
                     />
