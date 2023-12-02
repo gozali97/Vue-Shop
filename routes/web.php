@@ -20,6 +20,8 @@ use Inertia\Inertia;
 //user route
 Route::controller(UserController::class)->group(function () {
     Route::get('/',  'index')->name('home');
+    Route::get('/about',  'about')->name('about');
+    Route::get('/contact',  'contact')->name('contact');
 });
 Route::post('api/notification/handling', [DashboardController::class, 'response'])->name('response');
 

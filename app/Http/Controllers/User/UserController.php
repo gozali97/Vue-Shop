@@ -32,6 +32,16 @@ class UserController extends Controller
         ]);
     }
 
+    public function about()
+    {
+        return Inertia::render('User/About');
+    }
+
+    public function contact()
+    {
+        return Inertia::render('User/Contact');
+    }
+
     /**
      * Show the form for creating a new resource.
      */
