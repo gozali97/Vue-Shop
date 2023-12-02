@@ -1,66 +1,51 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Laravel 10 with inertia and Vue JS 3 - Ecommerce
+##Feature: 
+- shipping with Raja Ongkir https://rajaongkir.com
+- Payment with Midtrans https://midtrans.com
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Screenshots Frontend
+![Screenshot_2023-12-02_03-41-20](https://github.com/gozali97/Vue-Shop/assets/58220137/491689ac-f518-4f1c-b1c8-7593028c6be3)
+![Screenshot_2023-12-02_05-41-02](https://github.com/gozali97/Vue-Shop/assets/58220137/4d5069f2-86af-45c7-8c47-f3fb29ee48c0)
+![Screenshot_2023-12-02_05-41-19](https://github.com/gozali97/Vue-Shop/assets/58220137/a764a0d1-f1b0-45d1-bb3b-8f06a3f35c22)
+![Screenshot_2023-12-02_05-42-38](https://github.com/gozali97/Vue-Shop/assets/58220137/5f1ad7e3-701d-4a8b-8bce-3f638c3277b2)
 
-## About Laravel
+## Screenshots Backend
+![Screenshot_2023-12-02_05-40-32](https://github.com/gozali97/Vue-Shop/assets/58220137/f9ccf95e-4cd3-4215-b6b1-13f682995a4f)
+![Screenshot_2023-12-02_05-40-41](https://github.com/gozali97/Vue-Shop/assets/58220137/bd64f753-60f9-4a58-87a3-5f14dc2068c0)
+![Screenshot_2023-12-02_05-40-47](https://github.com/gozali97/Vue-Shop/assets/58220137/2aef480e-339d-4f6e-947d-12cb63b39543)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Donwload
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Clone Projek
 
-## Learning Laravel
+```bash
+  git clone https://github.com/gozali97/Vue-Shop.git nama_project
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Masuk ke folder dengan perintah
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+```bash
+  cd nama_projek
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+-   Copy .env.example menjadi .env kemudia edit database dan api key nya
 
-## Laravel Sponsors
+```bash
+    composer install
+    npm install
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+    php artisan key:generate
+```
 
-### Premium Partners
+```bash
+    php artisan artisan migrate:fresh --seed
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
 
-## Contributing
+#### Login Admin
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+-   email = admin@gmail.com
+-   password = 87654321
