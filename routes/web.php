@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\AddressController;
@@ -76,14 +77,13 @@ Route::group(['prefix' => 'admin', 'middleware' => 'redirectAdmin'], function ()
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 
+    //banner
     Route::controller(BannerController::class)->group(function () {
         Route::get('banner/index', 'index')->name('admin.banner.index');
         Route::post('banner/store', 'store')->name('admin.banner.store');
-        Route::put('banner/update/{id}', 'update')->name('admin.product.update');
+        Route::put('banner/update/{id}', 'update')->name('admin.banner.update');
         Route::delete('banner/image/{slug}', 'deleteImage')->name('admin.banner.image.delete');
         Route::delete('banner/destroy/{id}','destroy')->name('admin.banner.destroy');
-
-
     });
 
     //category
@@ -111,6 +111,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
         Route::put('product/update/{id}', 'update')->name('admin.product.update');
         Route::delete('product/image/{id}', 'deleteImage')->name('admin.product.image.delete');
         Route::delete('product/destroy/{id}','destroy')->name('admin.product.destroy');
+    });
+
+    //banner
+    Route::controller(OrderController::class)->group(function () {
+        Route::get('order/index', 'index')->name('admin.order.index');
+        Route::get('order/invoice/{id}', 'invoice')->name('admin.order.invoice');
     });
 });
 //end admin route

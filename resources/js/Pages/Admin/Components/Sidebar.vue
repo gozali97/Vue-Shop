@@ -112,8 +112,8 @@ import SubLink from "@/Components/SubLink.vue";
                     </ul>
                 </li>
                 <li>
-                    <a
-                        href="#"
+                    <Link
+                        :href="route('admin.order.index')"
                         class="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
                     >
                         <svg
@@ -135,7 +135,7 @@ import SubLink from "@/Components/SubLink.vue";
                         >
                 4
               </span>
-                    </a>
+                    </Link>
                 </li>
                 <ul
                     class="pt-5 mt-5 space-y-2 border-t border-gray-200 dark:border-gray-700"
