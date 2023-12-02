@@ -2,6 +2,7 @@
 import App from "@/Layouts/App.vue";
 import {Head, router, usePage} from "@inertiajs/vue3";
 import {ElNotification} from "element-plus";
+import {Money} from "@element-plus/icons-vue";
 const auth = usePage().props.auth;
 defineProps({
     order:Object,
@@ -116,8 +117,12 @@ const handlePayment = (token) => {
                     <div class="text-gray-700 mr-2">Total:</div>
                     <div class="text-gray-700 font-bold text-xl">Rp. {{ Number(total_price).toLocaleString() }}</div>
                 </div>
-                <div>
-                    <button @click="handlePayment(token)" class="block w-full max-w-xs mx-auto bg-blue-500 hover:bg-blue-700 focus:bg-blue-700 text-white rounded-lg px-3 py-3 font-semibold"><i class="mdi mdi-lock-outline mr-1"></i> PAY NOW</button>
+                <div class="flex justify-center">
+                    <button @click="handlePayment(token)" class="inline-flex justify-center w-full max-w-xs mx-auto bg-blue-500 hover:bg-blue-700 focus:bg-blue-700 text-white rounded-lg px-3 py-2 font-semibold">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mt-0.5 mr-2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        PAY NOW</button>
                 </div>
             </div>
         </div>

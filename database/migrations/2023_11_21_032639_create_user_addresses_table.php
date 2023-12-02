@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('type', 45);
             $table->string('address1', 255);
-            $table->string('address2', 255)->nullable();
+            $table->string('no_hp', 15);
             $table->string('province', 255);
             $table->string('city', 255);
             $table->string('state', 45)->nullable();

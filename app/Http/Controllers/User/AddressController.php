@@ -22,7 +22,7 @@ class AddressController extends Controller
                 $query->where('type', 'like', '%' . $search . '%')
                     ->OrWhere('province', 'like', '%' . $search . '%')
                     ->OrWhere('address1', 'like', '%' . $search . '%')
-                    ->OrWhere('address2', 'like', '%' . $search . '%')
+                    ->OrWhere('no_hp', 'like', '%' . $search . '%')
                     ->OrWhere('city', 'like', '%' . $search . '%');
             })
             ->where('user_id', $id)
@@ -73,7 +73,7 @@ class AddressController extends Controller
         $address = new UserAddress;
         $address->type = $request->type;
         $address->address1 = $request->address1;
-        $address->address2 = $request->address2;
+        $address->no_hp = $request->no_hp;
         $address->isMain = $request->isMain;
         $address->postcode = $request->postcode;
         $address->country_code = $request->country_code;
@@ -123,7 +123,7 @@ class AddressController extends Controller
         $address = UserAddress::findOrFail($id);
         $address->type = $request->type;
         $address->address1 = $request->address1;
-        $address->address2 = $request->address2;
+        $address->no_hp = $request->no_hp;
         $address->isMain = $request->isMain;
         $address->postcode = $request->postcode;
         $address->country_code = $request->country_code;

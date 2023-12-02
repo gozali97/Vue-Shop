@@ -61,7 +61,7 @@ function payOrder(order) {
                         </tr>
                         </thead>
                         <tbody class="lg:border-gray-300">
-                        <tr v-for="(order, key) in orders.data" :key="key" class="">
+                        <tr v-if="orders.data.length" v-for="(order, key) in orders.data" :key="key" class="">
                             <td class="whitespace-no-wrap py-4 text-sm font-bold text-gray-900 sm:px-6">
                                 {{ order.order_id }}
                             </td>
@@ -86,10 +86,17 @@ function payOrder(order) {
                                 <Link :href="route('invoice', order.id)"  v-else class="inline-flex items-center rounded-lg py-1.5 px-3 text-xs text-white bg-rose-600 hover:bg-rose-700">Invoice</Link>
                             </td>
                         </tr>
+                        <tr v-else>
+                            <td colspan="5" class="w-full">
+                                <div class="flex text-red-500 justify-center">
+                                No have order yet
+                                </div>
+                            </td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
-                <div class="mx-auto mt-4 flex max-w-md justify-center space-x-2 rounded-lg bg-gray-50 py-2">
+                <div v-if="orders.data.length" class="mx-auto mt-4 flex max-w-md justify-center space-x-2 rounded-lg bg-gray-50 py-2">
                     <ul class="flex">
                         <li v-for="(link, index) in orders.links" class="flex items-center mx-2 space-x-1 font-medium ">
                             <Link :href="link.url" v-if="link.label.includes('Previous')" class="flex p-2.5 text-gray-800 rounded-full items-center text-lg font-medium hover:bg-gray-200 hover:text-gray-900">

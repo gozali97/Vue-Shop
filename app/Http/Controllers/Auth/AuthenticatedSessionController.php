@@ -37,7 +37,7 @@ class AuthenticatedSessionController extends Controller
 
         Cache::forget('carts_global_count');
 
-        return redirect()->route('home');
+        return redirect()->route('dashboard');
     }
 
     /**

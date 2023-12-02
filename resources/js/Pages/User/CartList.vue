@@ -120,7 +120,7 @@ const dialogVisible = ref(false);
 const id = ref('');
 const type = ref('');
 const address1 = ref('');
-const address2 = ref('');
+const no_hp = ref('');
 const isMain = ref(false);
 const postcode = ref('');
 const country_code = ref('');
@@ -149,7 +149,7 @@ const AddAddress = async ()=>{
 
     const formData = new FormData();
     formData.append('address1', address1.value);
-    formData.append('address2', address2.value);
+    formData.append('no_hp', no_hp.value);
     formData.append('prov_id', prov_id.value);
     formData.append('city_id', city_id.value);
     formData.append('postcode', postcode.value);
@@ -272,8 +272,8 @@ const AddAddress = async ()=>{
                                     <input type="text" v-model="address1" name="form_address1" id="form_address1" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Address 1" required>
                                 </div>
                                 <div class="mb-6">
-                                    <label for="form_address2" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Address 2</label>
-                                    <input type="text" v-model="address2" name="form_address2" id="form_address2" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Address 2">
+                                    <label for="form_no_hp" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">No Handphone</label>
+                                    <input type="text" v-model="no_hp" name="form_no_hp" id="form_no_hp" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="No Handphone">
                                 </div>
                                 <div class="mb-6">
                                     <label for="form_province" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Province</label>

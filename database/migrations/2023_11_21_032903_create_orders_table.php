@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->string('order_id');
+            $table->foreignId('user_id')->constrained('users')->onUpdate('cascade')->onDelete('cascade');
             $table->decimal('gross_amount', 20, 2);
             $table->enum('status', ['Unpaid', 'Paid']);
             $table->dateTime('paid_at')->nullable();

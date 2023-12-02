@@ -168,7 +168,7 @@ class CartController extends Controller
         $address = new UserAddress;
         $address->type = $request->type;
         $address->address1 = $request->address1;
-        $address->address2 = $request->address2;
+        $address->no_hp = $request->no_hp;
         $address->isMain = $request->isMain;
         $address->postcode = $request->postcode;
         $address->country_code = $request->country_code;

@@ -89,11 +89,19 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     //category
     Route::controller(CategoryController::class)->group(function () {
         Route::get('category/index', 'index')->name('admin.category.index');
+        Route::post('category/store', 'store')->name('admin.category.store');
+        Route::put('category/update/{id}', 'update')->name('admin.category.update');
+        Route::delete('category/image/{slug}', 'deleteImage')->name('admin.category.image.delete');
+        Route::delete('category/destroy/{id}','destroy')->name('admin.category.destroy');
     });
 
     //brand
     Route::controller(BrandController::class)->group(function () {
         Route::get('brand/index', 'index')->name('admin.brand.index');
+        Route::post('brand/store', 'store')->name('admin.brand.store');
+        Route::put('brand/update/{id}', 'update')->name('admin.brand.update');
+        Route::delete('brand/image/{slug}', 'deleteImage')->name('admin.brand.image.delete');
+        Route::delete('brand/destroy/{id}','destroy')->name('admin.brand.destroy');
     });
 
     //product

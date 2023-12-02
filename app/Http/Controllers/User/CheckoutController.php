@@ -50,6 +50,7 @@ class CheckoutController extends Controller
 
         $order = new Order;
         $order->order_id = $order_id;
+        $order->user_id = $user->id;
         $order->status = 'Unpaid';
         $order->gross_amount = $total;
         $order->courir = $courir;

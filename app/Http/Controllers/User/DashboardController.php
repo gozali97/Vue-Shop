@@ -9,6 +9,7 @@ use App\Models\Payment;
 use App\Models\Product;
 use App\Models\UserAddress;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Midtrans\Config;
 
@@ -19,7 +20,8 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        $orders = Order::with('items', 'items.product')->latest()->paginate(10);
+        $user_id = Auth::user()->id;
+        $orders = Order::with('items', 'items.product')->where('user_id', $user_id)->latest()->paginate(10);
 
         return Inertia::render('User/Dashboard', [
             'orders' => $orders
@@ -61,7 +63,7 @@ class DashboardController extends Controller
                 'first_name' => 'Mr',
                 'last_name' => $user->name,
                 'email' => $user->email,
-                'phone' => '08111222333',
+                'phone' => $userAddress->no_hp,
             ),
         );
 //        dd($order);
