@@ -1,5 +1,5 @@
 # Laravel 10 with inertia and Vue JS 3 - Ecommerce
-##Feature: 
+## Feature: 
 - shipping with Raja Ongkir https://rajaongkir.com
 - Payment with Midtrans https://midtrans.com
 
