@@ -13,7 +13,7 @@ onMounted(() => {
 const canLogin = usePage().props.canLogin;
 const canRegister = usePage().props.canRegister;
 const auth = usePage().props.auth;
-const carts_global_count = computed(() => usePage().props.carts_global_count)
+const carts_global_count = computed(() => usePage().props.carts_global_count);
 
 const isDark = useDark();
 const toggleDark = useToggle(isDark);

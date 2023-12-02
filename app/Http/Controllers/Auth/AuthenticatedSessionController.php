@@ -36,6 +36,7 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         Cache::forget('carts_global_count');
+        Cache::forget('order_global');
 
         return redirect()->route('dashboard');
     }
